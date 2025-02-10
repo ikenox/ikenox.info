@@ -6,13 +6,19 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/** @type {import('eslint').Linter.Config[]} */
 export default [
   // Base config for all files
   {
-    ignores: ['node_modules/**', 'build/**', 'public/**', '.cache/**'],
-    linterOptions: { reportUnusedDisableDirectives: true },
+    ignores: [
+      'node_modules/**',
+      'build/**',
+      'public/**',
+      '.cache/**',
+      '.react-router/**',
+    ],
   },
+  { linterOptions: { reportUnusedDisableDirectives: true } },
 
   // JavaScript/TypeScript common config
   {
@@ -46,6 +52,7 @@ export default [
       ...tsPlugin.configs['recommended'].rules,
       ...importPlugin.configs.recommended.rules,
       ...importPlugin.configs.typescript.rules,
+      'import/no-unresolved': 'off',
     },
   },
 
