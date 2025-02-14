@@ -1,5 +1,5 @@
 import type { Route } from './+types/home';
-import { getAllPosts } from '~/utils/posts';
+import { getAllPosts } from '~/repository/posts';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,9 +8,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
-  const posts = getAllPosts();
+export async function loader() {
+  return { posts: await getAllPosts() };
+}
 
+export default function Home({ loaderData: { posts } }: Route.ComponentProps) {
   return (
     <div>
       <h1>Blog Posts</h1>
