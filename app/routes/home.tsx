@@ -2,10 +2,7 @@ import type { Route } from './+types/home';
 import { getAllPosts } from '~/repository/posts';
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: 'New React Router App' },
-    { name: 'description', content: 'Welcome to React Router!' },
-  ];
+  return [{ title: 'ikenox.info' }];
 }
 
 export async function loader() {
