@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
-import { object, string, parse, date } from 'valibot';
+import { object, string, parse } from 'valibot';
 
 export interface Post {
   slug: string;
@@ -36,11 +36,11 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
   return {
     slug,
     title: post.title,
-    date: post.date.toISOString().split('T')[0]!,
+    date: post.date,
     content: await marked(content),
   };
 };
 
-const postMetadataSchema = object({ title: string(), date: date() });
+const postMetadataSchema = object({ title: string(), date: string() });
 
 const postsDirectory = join(process.cwd(), 'app/content/posts');
