@@ -28,11 +28,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            <a href="https://x.com/ikenox_">X</a>
+            <a href="https://x.com/ikenox_" target="_blank" rel="noreferrer">
+              X
+            </a>
           </span>
           {' | '}
           <span>
-            <a href="https://github.com/ikenox">GitHub</a>
+            <a
+              href="https://github.com/ikenox"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </a>
           </span>
           {' | '}
           <span>
