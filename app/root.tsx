@@ -4,12 +4,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from 'react-router';
 
 import type { Route } from './+types/root';
 import './app.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const isTopPage = location.pathname === '/';
+
   return (
     <html lang="en">
       <head>
@@ -19,7 +23,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <header>
-          <span className="logo">ikenox.info</span>
+          <span className="logo">
+            {isTopPage ? 'ikenox.info' : <a href="/">ikenox.info</a>}
+          </span>
           {' | '}
           <span>
             <a href="https://x.com/ikenox_">X</a>
