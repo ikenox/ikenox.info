@@ -15,7 +15,7 @@ export default function Home({ loaderData: { posts } }: Route.ComponentProps) {
       <ul>
         {posts.map((post) => (
           <li key={post.slug}>
-            <time dateTime={post.date}>{post.date}</time>
+            <time dateTime={post.date}>{post.date}</time>{' '}
             <a href={`/blog/${post.slug}`}>{post.title}</a>
           </li>
         ))}
