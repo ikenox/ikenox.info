@@ -1,8 +1,21 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
-import { marked } from 'marked';
+import { fromHighlighter } from '@shikijs/markdown-it/core';
+import markdownit from 'markdown-it';
 import { object, string, parse } from 'valibot';
+import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
+import nord from '@shikijs/themes/nord';
+import javascript from '@shikijs/langs/javascript';
+import typescript from '@shikijs/langs/typescript';
+import shell from '@shikijs/langs/shell';
+import java from '@shikijs/langs/java';
+import rust from '@shikijs/langs/rust';
+import html from '@shikijs/langs/html';
+import vim from '@shikijs/langs/vim';
+import perl from '@shikijs/langs/perl';
+import { createHighlighter } from 'shiki';
+import wasm from 'shiki/wasm';
 
 export interface Post {
   slug: string;
@@ -33,12 +46,17 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
   const { data, content } = matter(fileContent);
   const post = parse(postMetadataSchema, data);
 
-  return {
-    slug,
-    title: post.title,
-    date: post.date,
-    content: await marked(content),
-  };
+  const highlighter = await createHighlighter({
+    themes: [nord],
+    langs: [javascript, typescript, shell, java, rust, html, vim, perl],
+    engine: createOnigurumaEngine(wasm),
+  });
+  const md = markdownit();
+  md.use(fromHighlighter(highlighter, { themes: { light: 'nord' } }));
+
+  const renderedContent = md.render(content);
+
+  return { slug, title: post.title, date: post.date, content: renderedContent };
 };
 
 const postMetadataSchema = object({ title: string(), date: string() });
