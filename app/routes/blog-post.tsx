@@ -1,6 +1,14 @@
 import { getPostBySlug } from '~/repository/posts';
 import type { Route } from './+types/blog-post';
 
+export function meta({ data: { post } }: Route.MetaArgs) {
+  return [
+    { title: post.title },
+    { property: 'og:title', content: post.title },
+    { property: 'twitter:title', content: post.title },
+  ];
+}
+
 export async function loader({ params }: Route.LoaderArgs) {
   return { post: await getPostBySlug(params.slug) };
 }
