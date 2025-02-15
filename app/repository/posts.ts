@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
 import { object, parse, string } from 'valibot';
-import { renderMarkdown } from '~/markdown';
+import { renderMarkdown } from '../markdown';
 
 export interface Post {
   slug: string;
@@ -11,23 +11,41 @@ export interface Post {
   content: string;
 }
 
-export const getAllPosts = async (): Promise<Post[]> => {
+export const getAllPostsSlugs = async () => {
   const files = await fs.readdir(postsDirectory);
-  return (
-    await Promise.all(
-      files
-        .filter((file) => file.endsWith('.md'))
-        .map((file) => {
-          const slug = file.replace(/\.md$/, '');
-          return getPostBySlug(slug);
-        })
-    )
-  ).sort((a, b) => (a.date > b.date ? -1 : 1));
+  return files
+    .filter((file) => file.endsWith('.md'))
+    .map((file) => ({ file, slug: file.replace(/\.md$/, '') }));
 };
 
-export const getPostBySlug = async (slug: string): Promise<Post> => {
+export const getAllPosts = async (): Promise<Post[]> => {
+  const posts = await getAllPostsSlugs();
+  return (
+    await Promise.all(
+      posts.map(({ slug }) => {
+        return getPostBySlug(slug);
+      })
+    )
+  )
+    .filter((post) => post != null)
+    .sort((a, b) => (a.date > b.date ? -1 : 1));
+};
+
+export const getPostBySlug = async (
+  slug: string
+): Promise<Post | undefined> => {
   const filePath = join(postsDirectory, `${slug}.md`);
-  const fileContent = await fs.readFile(filePath, 'utf-8');
+  const fileContent = await fs
+    .readFile(filePath, 'utf-8')
+    .catch((e: unknown) => {
+      if (e instanceof Error && e.message.includes('ENOENT')) {
+        return undefined;
+      }
+      throw e;
+    });
+  if (!fileContent) {
+    return undefined;
+  }
   const { data, content } = matter(fileContent);
   const post = parse(postMetadataSchema, data);
 

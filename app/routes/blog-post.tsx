@@ -1,5 +1,6 @@
 import { getPostBySlug } from '~/repository/posts';
 import type { Route } from './+types/blog-post';
+import { data } from 'react-router';
 
 export function meta({ data: { post } }: Route.MetaArgs) {
   return [
@@ -10,7 +11,11 @@ export function meta({ data: { post } }: Route.MetaArgs) {
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
-  return { post: await getPostBySlug(params.slug) };
+  const post = await getPostBySlug(params.slug);
+  if (!post) {
+    throw data('Post not found', { status: 404 });
+  }
+  return { post };
 }
 
 export default async function Post({
