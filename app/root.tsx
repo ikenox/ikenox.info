@@ -12,7 +12,7 @@ import './app.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const canonucalUrl = new URL(
+  const canonicalUrl = new URL(
     location.pathname,
     'https://ikenox.info'
   ).toString();
@@ -26,15 +26,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <title>ikenox.info</title>
 
-        <link rel="canonical" href={canonucalUrl} />
+        <link rel="canonical" href={canonicalUrl} />
 
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonucalUrl} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={'ikenox.info'} />
         <meta property="og:image" content={'/icon.png'} />
 
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonucalUrl} />
+        <meta property="twitter:url" content={canonicalUrl} />
         <meta property="twitter:title" content={'ikenox.info'} />
         <meta property="twitter:image" content={'/icon.png'} />
 
