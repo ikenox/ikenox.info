@@ -13,7 +13,7 @@ export function meta({ data: { post } }: Route.MetaArgs) {
 }
 
 const redirects: Record<string, string> = {
-  'corne-keyboard': 'made-corne-keyboard',
+  'made-corne-keyboard': 'corne-keyboard',
   'getting-started-ideavim': 'ideavim-getting-started-en',
   'ideavim-introduction': 'ideavim-getting-started',
   'inheritance-and-delegation-and-interface':

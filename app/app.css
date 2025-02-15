@@ -43,7 +43,7 @@ table {
 td,
 th {
   border: 1px inset grey;
-  padding: 0.4em;
+  padding: 0.2em 0.4em;
 }
 
 code {
