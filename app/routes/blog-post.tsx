@@ -1,6 +1,6 @@
 import { getPostBySlug } from '../repository/posts';
 import type { Route } from './+types/blog-post';
-import { data } from 'react-router';
+import { data, redirect } from 'react-router';
 
 export function meta({ data: { post } }: Route.MetaArgs) {
   return [
@@ -10,7 +10,24 @@ export function meta({ data: { post } }: Route.MetaArgs) {
   ];
 }
 
+const redirects: Record<string, string> = {
+  'corne-keyboard': 'made-corne-keyboard',
+  'getting-started-ideavim': 'ideavim-getting-started-en',
+  'ideavim-introduction': 'ideavim-getting-started',
+  'inheritance-and-delegation-and-interface':
+    'inheritance-delegation-interface',
+  'database-is-like-global-variable': 'repository-pattern',
+  'where-to-put-validation-in-clean-architecture':
+    'validation-in-clean-architecture',
+  'validation-in-clean-arch': 'validation-in-clean-architecture',
+};
+
 export async function loader({ params }: Route.LoaderArgs) {
+  const newPath = redirects[params.slug];
+  if (newPath) {
+    return redirect(`/blog/${newPath}`);
+  }
+
   const post = await getPostBySlug(params.slug);
   if (!post) {
     throw data('Post not found', { status: 404 });
