@@ -26,16 +26,13 @@ ul,
 ol {
   padding-left: 1em;
 }
+
 li.footnote-item > p {
   margin: 0;
 }
 
 h1 {
   font-size: 2rem;
-}
-
-.logo {
-  font-weight: bold;
 }
 
 table {
@@ -74,4 +71,8 @@ blockquote {
   border-left: 4px solid var(--gray-light);
   padding: 0 0 0 20px;
   margin: 0;
+}
+
+.logo {
+  font-weight: bold;
 }
