@@ -5,7 +5,7 @@ import { fromHighlighter } from '@shikijs/markdown-it/core';
 import markdownit from 'markdown-it';
 import { object, string, parse } from 'valibot';
 import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
-import slackDark from '@shikijs/themes/slack-dark';
+import darkPlus from '@shikijs/themes/dark-plus';
 import javascript from '@shikijs/langs/javascript';
 import typescript from '@shikijs/langs/typescript';
 import shell from '@shikijs/langs/shell';
@@ -47,12 +47,12 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
   const post = parse(postMetadataSchema, data);
 
   const highlighter = await createHighlighter({
-    themes: [slackDark],
+    themes: [darkPlus],
     langs: [javascript, typescript, shell, java, rust, html, vim, perl],
     engine: createOnigurumaEngine(wasm),
   });
   const md = markdownit();
-  md.use(fromHighlighter(highlighter, { themes: { light: 'slack-dark' } }));
+  md.use(fromHighlighter(highlighter, { themes: { light: 'dark-plus' } }));
 
   const renderedContent = md.render(content);
 
