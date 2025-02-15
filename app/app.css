@@ -1,5 +1,5 @@
 :root {
-  --code-font: ui-monospace, Menlo, Monaco;
+  --code-font: ui-monospace, Menlo, Monaco, sans-serif;
   --gray-light: #eeeeee;
 }
 
@@ -47,7 +47,7 @@ th {
 }
 
 code {
-  font-family: var(--code-font), sans-serif;
+  font-family: var(--code-font);
   background-color: var(--gray-light);
   font-size: 11pt;
   padding: 0.1em 0.25em;
@@ -55,7 +55,7 @@ code {
 }
 
 pre {
-  font-family: var(--code-font), sans-serif;
+  font-family: var(--code-font);
   padding: 1em;
   border: none;
   font-size: 11pt;
