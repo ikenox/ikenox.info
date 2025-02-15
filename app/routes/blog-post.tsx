@@ -1,4 +1,4 @@
-import { getPostBySlug } from '~/repository/posts';
+import { getPostBySlug } from '../repository/posts';
 import type { Route } from './+types/blog-post';
 import { data } from 'react-router';
 

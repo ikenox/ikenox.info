@@ -1,5 +1,5 @@
 import type { Route } from './+types/home';
-import { getAllPosts } from '~/repository/posts';
+import { getAllPosts } from '../repository/posts';
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'ikenox.info' }];

@@ -1,5 +1,5 @@
 import { Feed } from 'feed';
-import { getAllPosts } from '~/repository/posts';
+import { getAllPosts } from '../repository/posts';
 
 export async function loader() {
   const posts = await getAllPosts();
