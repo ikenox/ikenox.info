@@ -11,7 +11,9 @@ export default async function Post({
   return (
     <article>
       <h1>{post.title}</h1>
-      <time dateTime={post.date}>{post.date}</time>
+      <p>
+        <time dateTime={post.date}>{post.date}</time>
+      </p>
       <div dangerouslySetInnerHTML={{ __html: post.content }} />
     </article>
   );
