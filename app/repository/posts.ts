@@ -16,6 +16,7 @@ import vim from '@shikijs/langs/vim';
 import perl from '@shikijs/langs/perl';
 import { createHighlighter } from 'shiki';
 import wasm from 'shiki/wasm';
+import MarkdownIt from 'markdown-it';
 
 export interface Post {
   slug: string;
@@ -46,14 +47,7 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
   const { data, content } = matter(fileContent);
   const post = parse(postMetadataSchema, data);
 
-  const highlighter = await createHighlighter({
-    themes: [darkPlus],
-    langs: [javascript, typescript, shell, java, rust, html, vim, perl],
-    engine: createOnigurumaEngine(wasm),
-  });
-  const md = markdownit();
-  md.use(fromHighlighter(highlighter, { themes: { light: 'dark-plus' } }));
-
+  const md = await getMarkdownIt();
   const renderedContent = md.render(content);
 
   return { slug, title: post.title, date: post.date, content: renderedContent };
@@ -62,3 +56,17 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
 const postMetadataSchema = object({ title: string(), date: string() });
 
 const postsDirectory = join(process.cwd(), 'app/content/posts');
+
+let md: MarkdownIt | undefined;
+const getMarkdownIt = async () => {
+  if (!md) {
+    const highlighter = await createHighlighter({
+      themes: [darkPlus],
+      langs: [javascript, typescript, shell, java, rust, html, vim, perl],
+      engine: createOnigurumaEngine(wasm),
+    });
+    md = markdownit();
+    md.use(fromHighlighter(highlighter, { themes: { light: 'dark-plus' } }));
+  }
+  return md;
+};
