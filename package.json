@@ -23,6 +23,7 @@
     "gray-matter": "^4.0.3",
     "isbot": "^5.1.17",
     "markdown-it": "^14.1.0",
+    "markdown-it-footnote": "^4.0.0",
     "marked": "^15.0.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@react-router/dev": "^7.1.5",
     "@types/markdown-it": "^14.1.2",
+    "@types/markdown-it-footnote": "^3.0.4",
     "@types/node": "^20",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",

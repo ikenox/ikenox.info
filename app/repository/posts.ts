@@ -2,7 +2,6 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
 import { fromHighlighter } from '@shikijs/markdown-it/core';
-import markdownit from 'markdown-it';
 import { object, string, parse } from 'valibot';
 import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
 import darkPlus from '@shikijs/themes/dark-plus';
@@ -17,6 +16,7 @@ import perl from '@shikijs/langs/perl';
 import { createHighlighter } from 'shiki';
 import wasm from 'shiki/wasm';
 import MarkdownIt from 'markdown-it';
+import footnote from 'markdown-it-footnote';
 
 export interface Post {
   slug: string;
@@ -65,8 +65,10 @@ const getMarkdownIt = async () => {
       langs: [javascript, typescript, shell, java, rust, html, vim, perl],
       engine: createOnigurumaEngine(wasm),
     });
-    md = markdownit();
-    md.use(fromHighlighter(highlighter, { themes: { light: 'dark-plus' } }));
+    md = MarkdownIt();
+    md.use(
+      fromHighlighter(highlighter, { themes: { light: 'dark-plus' } })
+    ).use(footnote);
   }
   return md;
 };
