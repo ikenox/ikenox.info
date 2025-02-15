@@ -1,0 +1,10 @@
+.tweet-button {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  gap: 4px;
+}
+
+.tweet-button img {
+  display: block;
+}
