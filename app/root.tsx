@@ -44,7 +44,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            <a href="">RSS</a>
+            <a href="/rss.xml" target="_blank" rel="noreferrer">
+              RSS
+            </a>
           </span>
         </header>
         {children}
