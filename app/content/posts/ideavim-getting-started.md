@@ -1,7 +1,6 @@
 ---
 title: IntelliJ(Android Studio)のVimプラグイン「IdeaVim」の使い方と設定
 date: '2017-12-25'
-oldPaths: ['ideavim-introduction']
 ---
 
 この記事は[JetBrains Advent Calendar 2017](https://qiita.com/advent-calendar/2017/jetbrains)

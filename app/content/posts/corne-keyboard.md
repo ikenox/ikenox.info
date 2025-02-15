@@ -1,7 +1,6 @@
 ---
 title: Corne Keyboard (コルネキーボード) を組んだ
 date: '2019-01-21'
-oldPaths: ['made-corne-keyboard']
 ---
 
 Corne Keyboard は、 [@foostan](https://twitter.com/foostan)

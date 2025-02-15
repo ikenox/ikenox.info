@@ -1,7 +1,6 @@
 ---
 title: データベースという名のグローバル変数との向き合い方(Repository Pattern)
 date: '2019-01-12'
-oldPaths: ['database-is-like-global-variable']
 ---
 
 ## グローバル変数

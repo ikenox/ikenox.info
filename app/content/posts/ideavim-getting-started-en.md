@@ -1,7 +1,6 @@
 ---
 title: Getting Started with IdeaVim
 date: '2019-01-25'
-oldPaths: ['getting-started-ideavim']
 lang: en
 ---
 

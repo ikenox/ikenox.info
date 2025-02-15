@@ -1,7 +1,6 @@
 ---
 title: 'The Clean Architecture: Where should we put validation logics in the code'
 date: '2019-09-21'
-oldPaths: ['where-to-put-validation-in-clean-architecture']
 lang: en
 ---
 
