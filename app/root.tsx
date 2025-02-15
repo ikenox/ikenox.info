@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Links,
   Meta,
   Outlet,
   Scripts,
@@ -39,6 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta property="twitter:image" content={'/icon.png'} />
 
         <Meta />
+        <Links />
       </head>
       <body>
         <header>
