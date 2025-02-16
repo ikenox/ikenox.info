@@ -19,11 +19,9 @@ Corne Keyboard は、 [@foostan](https://twitter.com/foostan)
 
 見た目と使い心地ともにとても満足しています。会社で毎日バリバリ使ってます。
 
-![My Corne Cherry Keyboard](./assets/my-corne.jpg)
+![My Corne Cherry Keyboard](static/my-corne.jpg)
 
-![My Corne Cherry Keyboard](./assets/my-corne2-2.jpg)
-
-![My Corne Cherry Keyboard](./assets/my-corne3.jpg)
+![My Corne Cherry Keyboard](static/my-corne3.jpg)
 
 ## 出会い
 
@@ -65,8 +63,7 @@ Corne Cherry の存在を知った直後、偶然にもその 1 週間後くら�
 
 ## 組み立て
 
-キットには同梱されてないキーキャップやキースイッチを<a href="https://kbdfans.cn/" target="_blank">KBDfans</a>
-で調達し、ハンダごてなどの工具類は amazon で揃えた。
+キットには同梱されてないキーキャップやキースイッチを[KBDfans](https://kbdfans.cn/)で調達し、ハンダごてなどの工具類は amazon で揃えた。
 中学校ぶりのハンダ付けだったが案外すぐ慣れて、時間はかかったが大きなトラブル無く作り終えることができた。
 詳細なビルドログはいろいろな人が書いてくれてる気がするので自分は省略。
 
@@ -173,7 +170,7 @@ L2 layer
 特にキースイッチやキーキャップの誘惑がすごくて、最初に Corne Cherry
 を作ろうと思った際には必要最低限な数のキースイッチやキーキャップだけを買ったはずなのに、なぜか今ではキーボードをもう 1 つ作れるくらいのそれが余っている。
 
-![stock](./assets/stock.jpg)
+![stock](static/stock.jpg)
 
 キースイッチについては、最初は静音黒軸を使ってたけど、静音じゃないほうが打ち心地が軽やかで気持ちいい気がしてしまい、気づいたら BOX 赤軸に変えていた。
 そしてそれから一週間経った今、今度は BOX 黒軸が欲しくなっている。多分この週末で買いに行くんだと思う。

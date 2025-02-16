@@ -76,3 +76,7 @@ blockquote {
 .logo {
   font-weight: bold;
 }
+
+.blog-post-content img {
+  max-width: 720px;
+}

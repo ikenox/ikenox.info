@@ -50,7 +50,10 @@ export default function Post({ loaderData: { post } }: Route.ComponentProps) {
         <TweetButton url={url} text={post.title}></TweetButton>
       </p>
 
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div
+        className={'blog-post-content'}
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
     </article>
   );
 }

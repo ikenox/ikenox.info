@@ -76,10 +76,7 @@ const convertImageUrl = (md: MarkdownIt) => {
         !src.startsWith('https://') &&
         !src.startsWith('/')
       ) {
-        target.attrSet(
-          'src',
-          import.meta.env.DEV ? join('/app/blog-posts', src) : ''
-        );
+        target.attrSet('src', join('/blog-posts', src));
       }
     }
     return defaultImageRender(tokens, idx, options, env, self);
