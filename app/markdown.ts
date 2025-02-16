@@ -13,6 +13,7 @@ import wasm from 'shiki/wasm';
 import MarkdownIt, { type PluginSimple } from 'markdown-it';
 import { fromHighlighter } from '@shikijs/markdown-it/core';
 import footnote from 'markdown-it-footnote';
+import { join } from 'path';
 
 export const renderMarkdown = async (
   markdownContent: string
@@ -27,6 +28,7 @@ const getMarkdownIt = async () => {
     md = MarkdownIt()
       .use(configureExternalLink)
       .use(await buildHighlighter())
+      .use(convertImageUrl)
       .use(footnote);
   }
   return md;
@@ -55,5 +57,31 @@ const configureExternalLink = (md: MarkdownIt) => {
       target.attrSet('rel', 'noopener');
     }
     return defaultLinkOpenRender(tokens, idx, options, env, self);
+  };
+};
+
+const convertImageUrl = (md: MarkdownIt) => {
+  const defaultImageRender =
+    md.renderer.rules.image ||
+    ((tokens, idx, options, env, self) =>
+      self.renderToken(tokens, idx, options));
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const target = tokens[idx];
+    if (target) {
+      const src = target.attrGet('src');
+      target.attrSet('width', '100%');
+      if (
+        src &&
+        !src.startsWith('http://') &&
+        !src.startsWith('https://') &&
+        !src.startsWith('/')
+      ) {
+        target.attrSet(
+          'src',
+          import.meta.env.DEV ? join('/app/blog-posts', src) : ''
+        );
+      }
+    }
+    return defaultImageRender(tokens, idx, options, env, self);
   };
 };

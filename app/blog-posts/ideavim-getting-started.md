@@ -21,7 +21,7 @@ IntelliJ などを Vim っぽく操作できるようになります。\
 
 ※キーマップはカスタマイズ済です。
 
-![overview](/blog-image/overview.gif)
+![overview](./assets/overview.gif)
 
 ### なぜ IdeaVim を使うか
 
@@ -63,7 +63,7 @@ IdeaVim プラグインを使うと、
 通常の IntelliJ プラグインと同じく、`[Preferences] > [Plugins]`からインストールできます。\
 インストール後に IntelliJ を再起動すると IdeaVim が有効になります。
 
-![Install IdeaVim](/blog-image/install-ideavim.png)
+![Install IdeaVim](./assets/install-ideavim.png)
 
 ### EAP ビルド
 
@@ -194,14 +194,14 @@ vnoremap ,a :action GotoAction<CR>
 まず、IntelliJ の`[Preferences] > [Keymap]`から、設定したい機能を探します。その機能に IntelliJ
 デフォルトで割り当てられているショートカットキーから探すと早いです。
 
-![keymap](/blog-image/keymap.png)
+![keymap](./assets/keymap.png)
 
 見つかったら、その機能の名前を確認しておきます。
 
 次に、`:actionlist`コマンドを使うことで、IdeaVim で呼び出し可能なアクションの一覧を確認することができます。 また、`:actionlist XXX`
 とすると、名前に`XXX`を含むアクションを検索することもできます。
 
-![actionlist](/blog-image/actionlist.gif)
+![actionlist](./assets/actionlist.gif)
 
 さきほど確認した機能名とアクション名は似ていることが多いため、機能名の一部や、その機能を連想するような単語（検索関連の機能なら`search`
 とか）で検索して、それっぽいのがヒットしたら試してみる、というのを当たるまで繰り返します。\

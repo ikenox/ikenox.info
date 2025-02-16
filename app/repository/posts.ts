@@ -59,4 +59,4 @@ export const getPostBySlug = async (
 
 const postMetadataSchema = object({ title: string(), date: string() });
 
-const postsDirectory = join(process.cwd(), 'app/content/posts');
+const postsDirectory = join(process.cwd(), 'app/blog-posts');

@@ -16,7 +16,7 @@ developed by Jetbrains as you can see the repository owner name.
 
 Keymap is personally customized.
 
-![demo](/blog-image/overview.gif)
+![demo](./assets/overview.gif)
 
 ### Why use IdeaVim
 
@@ -56,7 +56,7 @@ You can see more details at README.md of [GitHub repositoy](https://github.com/J
 In IntelliJ or other Jetbrains IDEs, you can install IdeaVim from `[Preferences] > [Plugins]`.
 After install, you have to restart the IDE to enable IdeaVim.
 
-![Install IdeaVim](/blog-image/install-ideavim.png)
+![Install IdeaVim](./assets/install-ideavim.png)
 
 ### EAP build
 
@@ -196,7 +196,7 @@ vnoremap ,a :action GotoAction<CR>
 If you want to know an action name of some IntelliJ functions, you can use an `:actionlist` command.
 By using the command you can search an action by words.
 
-![actionlist](/blog-image/actionlist.gif)
+![actionlist](./assets/actionlist.gif)
 
 But, currently there is no way to know the action name of the IntelliJ function which you want to
 call from IdeaVim.

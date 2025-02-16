@@ -40,7 +40,6 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function Post({ loaderData: { post } }: Route.ComponentProps) {
   const location = useLocation();
   const url = new URL(location.pathname, 'https://ikenox.info').toString();
-
   return (
     <article>
       <h1>{post.title}</h1>
