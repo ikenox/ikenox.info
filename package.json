@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
+    "build": "NODE_OPTIONS='--conditions workerd' react-router build",
     "deploy": "npm run build && wrangler deploy",
     "dev": "react-router dev",
     "start": "wrangler dev",
