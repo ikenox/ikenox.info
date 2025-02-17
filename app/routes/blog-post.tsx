@@ -3,6 +3,7 @@ import type { Route } from './+types/blog-post';
 import { data, redirect, useLocation } from 'react-router';
 import React from 'react';
 import { TweetButton } from '../components/TweetButton';
+import { isBuildPhase } from '../env';
 
 export function meta({ data: { post } }: Route.MetaArgs) {
   return [
@@ -28,6 +29,10 @@ export async function loader({ params }: Route.LoaderArgs) {
   const newPath = redirects[params.slug];
   if (newPath) {
     return redirect(`/blog/${newPath}`);
+  }
+
+  if (import.meta.env.PROD && !isBuildPhase()) {
+    throw data('Post not found', { status: 404 });
   }
 
   const post = await getPostBySlug(params.slug);
