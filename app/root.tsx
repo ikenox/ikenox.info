@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -45,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <header>
           <span className="logo">
-            {isTopPage ? 'ikenox.info' : <a href="/">ikenox.info</a>}
+            {isTopPage ? 'ikenox.info' : <Link to="/">ikenox.info</Link>}
           </span>
           {' | '}
           <span>

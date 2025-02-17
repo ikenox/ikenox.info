@@ -1,5 +1,6 @@
 import type { Route } from './+types/home';
 import { getAllPosts } from '../repository/posts';
+import { Link } from 'react-router';
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'ikenox.info' }];
@@ -16,7 +17,7 @@ export default function Home({ loaderData: { posts } }: Route.ComponentProps) {
         {posts.map((post) => (
           <li key={post.slug}>
             <time dateTime={post.date}>{post.date}</time>{' '}
-            <a href={`/blog/${post.slug}`}>{post.title}</a>
+            <Link to={`/blog/${post.slug}`}>{post.title}</Link>
           </li>
         ))}
       </ul>
