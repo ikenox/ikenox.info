@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
+    "deploy": "npm run build && wrangler deploy",
     "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "start": "wrangler dev",
     "typecheck": "react-router typegen && tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -49,6 +50,8 @@
     "prettier": "^3.5.0",
     "react-router-devtools": "^1.1.0",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "@cloudflare/workers-types": "^4.20241112.0",
+    "wrangler": "^3.87.0"
   }
 }
