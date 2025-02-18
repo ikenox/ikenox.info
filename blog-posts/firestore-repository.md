@@ -62,7 +62,7 @@ const users = rootCollection({
 
 ### repositoryインスタンスの作成
 
-前のステップで定義したスキーマを使って、repositoryのインスタンスを作成します。
+前のステップで定義したスキーマと、公式ライブラリから取得したDBオブジェクトを使って、repositoryのインスタンスを作成します。
 
 ```ts
 // For backend
