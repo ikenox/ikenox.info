@@ -157,10 +157,10 @@ console.log(`avg:${result.avgAge} sum:${result.sumAge} count:${result.count}`);
 ```ts
 const validQuery = query(users, $('profile.age', '>=', 20));
 
-const invalidQuery1 = query(users, $('profile.ago', '>=', 20));
+const invalidQuery1 = query(users, $('profile.foo', '>=', 20));
 //                                    ~~~~~~~~~~~ スキーマで定義されていないフィールド名のためコンパイルエラー
 
-const invalidQuery2 = query(users, $('profile.ago', '>=', 'foo'));
+const invalidQuery2 = query(users, $('profile.age', '>=', 'foo'));
 //                                                         ~~~ 数値型でないためコンパイルエラー
 ```
 
