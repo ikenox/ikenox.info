@@ -28,7 +28,7 @@
     "@react-router/dev": "^7.1.5",
     "@types/markdown-it": "^14.1.2",
     "@types/markdown-it-footnote": "^3.0.4",
-    "@types/node": "^22",
+    "@types/node": "^22.13.5",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
@@ -55,5 +55,6 @@
     "marked": "^15.0.7",
     "@cloudflare/workers-types": "^4.20241112.0",
     "wrangler": "^3.87.0"
-  }
+  },
+  "packageManager": "pnpm@10.4.0"
 }
