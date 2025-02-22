@@ -1,5 +1,4 @@
 import { createHighlighter } from 'shiki';
-import darkPlus from '@shikijs/themes/dark-plus';
 import javascript from '@shikijs/langs/javascript';
 import typescript from '@shikijs/langs/typescript';
 import shell from '@shikijs/langs/shell';
@@ -14,6 +13,7 @@ import MarkdownIt, { type PluginSimple } from 'markdown-it';
 import { fromHighlighter } from '@shikijs/markdown-it/core';
 import footnote from 'markdown-it-footnote';
 import { join } from 'path';
+import { theme } from './myTheme';
 
 export const renderMarkdown = async (
   markdownContent: string
@@ -37,11 +37,11 @@ const getMarkdownIt = async () => {
 const buildHighlighter = async (): Promise<PluginSimple> => {
   return fromHighlighter(
     await createHighlighter({
-      themes: [darkPlus],
+      themes: [theme],
       langs: [javascript, typescript, shell, java, rust, html, vim, perl],
       engine: createOnigurumaEngine(wasm),
     }),
-    { themes: { light: 'dark-plus' } }
+    { themes: { light: 'my-theme' } }
   );
 };
 

@@ -1,12 +1,16 @@
 :root {
   --code-font: ui-monospace, Menlo, Monaco, sans-serif;
-  --gray-light: #eeeeee;
+  --white: #ffffff;
+  --grey: grey;
+  --grey-light: #F3F3F3;
+  --yellow-light: #ffffd7;
 }
 
 body {
   font-family: sans-serif;
   padding: 1rem;
   margin: 0 0 env(safe-area-inset-bottom);
+  background-color: var(--yellow-light);
 }
 
 @media (min-width: 720px) {
@@ -36,39 +40,40 @@ h1 {
 }
 
 table {
-  border: 1px outset grey;
+  background-color: var(--white);
+  border: 1px outset var(--grey);
   border-spacing: 2px;
 }
 
 td,
 th {
-  border: 1px inset grey;
+  border: 1px inset var(--grey);
   padding: 0.2em 0.4em;
 }
 
 code {
   font-family: var(--code-font);
-  background-color: var(--gray-light);
+  background-color: var(--grey-light);
   font-size: 11pt;
   padding: 0.1em 0.25em;
   border-radius: 2px;
-}
-
-pre {
-  font-family: var(--code-font);
-  padding: 1em;
-  border: none;
-  font-size: 11pt;
-  line-height: 1.6;
-  overflow-x: auto;
 }
 
 pre > code {
   all: unset;
 }
 
+pre {
+  font-family: var(--code-font);
+  padding: 1em;
+  font-size: 11pt;
+  line-height: 1.6;
+  overflow-x: auto;
+  border: 1px outset;
+}
+
 blockquote {
-  border-left: 4px solid var(--gray-light);
+  border-left: 4px solid var(--grey-light);
   padding: 0 0 0 20px;
   margin: 0;
 }
