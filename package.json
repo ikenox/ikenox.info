@@ -8,10 +8,12 @@
     "dev": "react-router dev",
     "start": "wrangler dev",
     "typecheck": "react-router typegen && tsc",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint": "eslint --cache .",
-    "lint:fix": "eslint --cache --fix ."
+    "check": "pnpm run --sequential \"/^check:.*/\"",
+    "check:prettier": "prettier --check .",
+    "check:eslint": "eslint --cache .",
+    "fix": "pnpm run --sequential \"/^fix:.*/\"",
+    "fix:prettier": "prettier --write .",
+    "fix:eslint": "eslint --cache --fix ."
   },
   "dependencies": {
     "@react-router/node": "^7.1.5",

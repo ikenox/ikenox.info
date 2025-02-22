@@ -45,7 +45,7 @@ export default [
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
-      parserOptions: { project: './tsconfig.json' },
+      parserOptions: { useProjectService: true },
     },
     plugins: { '@typescript-eslint': tsPlugin, import: importPlugin },
     rules: {
@@ -53,6 +53,10 @@ export default [
       ...importPlugin.configs.recommended.rules,
       ...importPlugin.configs.typescript.rules,
       'import/no-unresolved': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
     },
   },
 
