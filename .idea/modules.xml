@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ikenox-info-rr.iml" filepath="$PROJECT_DIR$/.idea/ikenox-info-rr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ikenox.info.iml" filepath="$PROJECT_DIR$/.idea/ikenox.info.iml" />
     </modules>
   </component>
 </project>

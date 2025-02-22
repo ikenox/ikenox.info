@@ -45,9 +45,6 @@ importers:
       '@shikijs/markdown-it':
         specifier: ^2.3.2
         version: 2.3.2
-      '@shikijs/themes':
-        specifier: ^2.3.2
-        version: 2.3.2
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
