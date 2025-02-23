@@ -6,11 +6,7 @@ import { TweetButton } from '../components/TweetButton';
 import { isBuildPhase } from '../env';
 
 export function meta({ data: { post } }: Route.MetaArgs) {
-  return [
-    { title: post.title },
-    { property: 'og:title', content: post.title },
-    { property: 'twitter:title', content: post.title },
-  ];
+  return [{ title: post.title }, { property: 'og:title', content: post.title }];
 }
 
 const redirects: Record<string, string> = {

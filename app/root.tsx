@@ -30,15 +30,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <link rel="canonical" href={canonicalUrl} />
 
+        <meta
+          name="description"
+          content={
+            'A tech blog and portfolio site sharing software engineering insights, experiences, and thoughts.'
+          }
+        />
+
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={'ikenox.info'} />
         <meta property="og:image" content={'/icon.png'} />
+        <meta property="og:site_name" content={'ikenox.info'} />
 
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalUrl} />
-        <meta property="twitter:title" content={'ikenox.info'} />
-        <meta property="twitter:image" content={'/icon.png'} />
+        <meta property="twitter:card" content="summary" />
 
         <Meta />
         <Links />
