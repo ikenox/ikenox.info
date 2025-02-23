@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={'ikenox.info'} />
-        <meta property="og:image" content={'/icon.png'} />
+        <meta property="og:image" content={'https://ikenox.info/icon.png'} />
         <meta property="og:site_name" content={'ikenox.info'} />
 
         <meta property="twitter:card" content="summary" />
