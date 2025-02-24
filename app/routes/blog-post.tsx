@@ -5,9 +5,20 @@ import React from 'react';
 import { TweetButton } from '../components/TweetButton';
 import { isBuildPhase } from '../env';
 
-export function meta({ data: { post } }: Route.MetaArgs) {
-  return [{ title: post.title }, { property: 'og:title', content: post.title }];
-}
+export const meta: Route.MetaFunction = ({
+  data: { post },
+}: Route.MetaArgs) => {
+  return [
+    { title: post.title },
+    { property: 'og:title', content: post.title },
+    ...(post.description
+      ? [
+          { name: 'description', content: post.description },
+          { property: 'og:description', content: post.description },
+        ]
+      : []),
+  ];
+};
 
 const redirects: Record<string, string> = {
   'made-corne-keyboard': 'corne-keyboard',
@@ -21,7 +32,7 @@ const redirects: Record<string, string> = {
   'validation-in-clean-arch': 'validation-in-clean-architecture',
 };
 
-export async function loader({ params }: Route.LoaderArgs) {
+export const loader = async ({ params }: Route.LoaderArgs) => {
   const newPath = redirects[params.slug];
   if (newPath) {
     return redirect(`/blog/${newPath}`);
@@ -36,7 +47,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     throw data('Post not found', { status: 404 });
   }
   return { post };
-}
+};
 
 export default function Post({ loaderData: { post } }: Route.ComponentProps) {
   const location = useLocation();

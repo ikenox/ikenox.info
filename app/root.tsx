@@ -20,6 +20,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
   ).toString();
   const isTopPage = location.pathname === '/';
 
+  const headers = {
+    siteName: 'ikenox.info',
+    description:
+      'A tech blog and portfolio site sharing software engineering insights, experiences, and thoughts.',
+    image: 'https://ikenox.info/icon.png',
+  };
+
   return (
     <html lang="en">
       <head>
@@ -30,20 +37,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <link rel="canonical" href={canonicalUrl} />
 
-        <meta
-          name="description"
-          content={
-            'A tech blog and portfolio site sharing software engineering insights, experiences, and thoughts.'
-          }
-        />
+        <meta name="image" content={headers.image} />
+        <meta name="description" content={headers.description} />
 
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={'ikenox.info'} />
-        <meta property="og:image" content={'https://ikenox.info/icon.png'} />
-        <meta property="og:site_name" content={'ikenox.info'} />
+        <meta property="og:title" content={headers.siteName} />
+        <meta property="og:site_name" content={headers.siteName} />
+        <meta property="og:image" content={headers.image} />
+        <meta property="og:description" content={headers.description} />
 
         <meta property="twitter:card" content="summary" />
+        <meta property="twitter:image" content={headers.image} />
 
         <Meta />
         <Links />
