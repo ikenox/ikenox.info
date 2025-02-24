@@ -9,6 +9,7 @@ export interface Post {
   title: string;
   date: string;
   content: string;
+  description?: string;
 }
 
 export const getAllPostsSlugs = async () => {
@@ -47,12 +48,12 @@ export const getPostBySlug = async (
     return undefined;
   }
   const { data, content } = matter(fileContent);
-  const post = parse(postMetadataSchema, data);
+  const meta = parse(postMetadataSchema, data);
 
   return {
     slug,
-    title: post.title,
-    date: post.date,
+    title: meta.title,
+    date: meta.date,
     content: await renderMarkdown(content),
   };
 };
