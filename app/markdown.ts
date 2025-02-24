@@ -1,4 +1,4 @@
-import { createHighlighter } from 'shiki';
+import { createHighlighter, createHighlighterCore } from 'shiki';
 import javascript from '@shikijs/langs/javascript';
 import typescript from '@shikijs/langs/typescript';
 import shell from '@shikijs/langs/shell';
@@ -7,42 +7,45 @@ import rust from '@shikijs/langs/rust';
 import html from '@shikijs/langs/html';
 import vim from '@shikijs/langs/vim';
 import perl from '@shikijs/langs/perl';
-import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
-import wasm from 'shiki/wasm';
-import MarkdownIt, { type PluginSimple } from 'markdown-it';
-import { fromHighlighter } from '@shikijs/markdown-it/core';
-import footnote from 'markdown-it-footnote';
 import { join } from 'path';
 import { theme } from './myTheme';
+import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
+import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import { unified, type Processor } from 'unified';
 
 export const renderMarkdown = async (
   markdownContent: string
 ): Promise<string> => {
-  const md = await getMarkdownIt();
-  return md.render(markdownContent);
+  const processor = await getProcessor();
+  const result = await processor.process(markdownContent);
+  console.log('>>>>>>', result);
+  return String(result);
 };
 
-let md: MarkdownIt | undefined;
-const getMarkdownIt = async () => {
-  if (!md) {
-    md = MarkdownIt()
-      .use(configureExternalLink)
-      .use(await buildHighlighter())
-      .use(convertImageUrl)
-      .use(footnote);
+let _processor: Processor | undefined;
+const getProcessor = async (): Promise<Processor> => {
+  if (!_processor) {
+    _processor = await unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype)
+      .use(
+        rehypeShikiFromHighlighter,
+        await createHighlighterCore({
+          langs: [javascript, typescript, shell, java, rust, html, vim, perl],
+        }),
+        { theme }
+      )
+      .use(rehypeStringify);
+    // .use(configureExternalLink)
+    // .use(await buildHighlighter())
+    // .use(convertImageUrl)
+    // .use(footnote);
   }
-  return md;
-};
-
-const buildHighlighter = async (): Promise<PluginSimple> => {
-  return fromHighlighter(
-    await createHighlighter({
-      themes: [theme],
-      langs: [javascript, typescript, shell, java, rust, html, vim, perl],
-      engine: createOnigurumaEngine(wasm),
-    }),
-    { themes: { light: 'my-theme' } }
-  );
+  return _processor;
 };
 
 const configureExternalLink = (md: MarkdownIt) => {
