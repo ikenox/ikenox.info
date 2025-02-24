@@ -14,7 +14,7 @@ export const theme: ThemeRegistration = {
     { scope: 'string', settings: { foreground: '#009933' } },
     {
       scope: ['keyword', 'storage.type', 'support.type'],
-      settings: { foreground: '#FF0000' },
+      settings: { foreground: '#CC0000' },
     },
     { scope: 'constant.numeric', settings: { foreground: '#0000FF' } },
     { scope: 'variable', settings: { foreground: '#000000' } },
