@@ -22,8 +22,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkExtractFrontmatter from 'remark-extract-frontmatter';
 import yaml from 'yaml';
 import { visit } from 'unist-util-visit';
-import type { Node } from 'unist';
-import type { Element } from 'hast';
+import type { Element, Text } from 'hast';
 
 export type ProcessResult = { content: string; frontMatter: unknown };
 
@@ -64,8 +63,16 @@ const getProcessor = async (): Promise<Processor> => {
 const changeFootnoteStyle: Plugin = () => {
   return (tree) =>
     visit(tree, 'element', (node: Element) => {
+      // 1 -> [1]
+      if (node.properties['dataFootnoteRef']) {
+        visit(node, 'text', (text: Text) => {
+          text.value = `[${text.value}]`;
+        });
+        return;
+      }
+
+      // Replace footnote section header with just a horizontal line
       if (node.properties['dataFootnotes']) {
-        console.log(node);
         const elem = node.children
           .filter((e) => e.type === 'element')
           .find((e) => e.tagName === 'h2');
@@ -74,6 +81,7 @@ const changeFootnoteStyle: Plugin = () => {
           elem.properties = {};
           elem.children = [];
         }
+        return;
       }
     });
 };
