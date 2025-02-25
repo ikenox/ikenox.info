@@ -22,6 +22,8 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkExtractFrontmatter from 'remark-extract-frontmatter';
 import yaml from 'yaml';
 import { visit } from 'unist-util-visit';
+import type { Node } from 'unist';
+import type { Element } from 'hast';
 
 export type ProcessResult = { content: string; frontMatter: unknown };
 
@@ -52,16 +54,33 @@ const getProcessor = async (): Promise<Processor> => {
         rel: 'nofollow noopener noreferrer',
       })
       .use(rewriteImageUrl)
+      .use(changeFootnoteStyle)
       .use(rehypeStringify)
       .freeze();
-    // .use(footnote);
   }
   return _processor;
 };
 
+const changeFootnoteStyle: Plugin = () => {
+  return (tree) =>
+    visit(tree, 'element', (node: Element) => {
+      if (node.properties['dataFootnotes']) {
+        console.log(node);
+        const elem = node.children
+          .filter((e) => e.type === 'element')
+          .find((e) => e.tagName === 'h2');
+        if (elem) {
+          elem.tagName = 'hr';
+          elem.properties = {};
+          elem.children = [];
+        }
+      }
+    });
+};
+
 const rewriteImageUrl: Plugin = () => {
   return (tree) =>
-    visit(tree, 'element', (node: import('hast').Element) => {
+    visit(tree, 'element', (node: Element) => {
       if (node.tagName === 'img') {
         const src = node.properties['src'];
         if (
