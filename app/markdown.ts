@@ -1,4 +1,8 @@
-import { createHighlighter, createHighlighterCore } from 'shiki';
+import {
+  createHighlighter,
+  createHighlighterCore,
+  createOnigurumaEngine,
+} from 'shiki';
 import javascript from '@shikijs/langs/javascript';
 import typescript from '@shikijs/langs/typescript';
 import shell from '@shikijs/langs/shell';
@@ -7,6 +11,7 @@ import rust from '@shikijs/langs/rust';
 import html from '@shikijs/langs/html';
 import vim from '@shikijs/langs/vim';
 import perl from '@shikijs/langs/perl';
+import wasm from 'shiki/wasm';
 import { join } from 'path';
 import { theme } from './myTheme';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
@@ -36,6 +41,7 @@ const getProcessor = async (): Promise<Processor> => {
         rehypeShikiFromHighlighter,
         await createHighlighterCore({
           langs: [javascript, typescript, shell, java, rust, html, vim, perl],
+          engine: createOnigurumaEngine(wasm),
         }),
         { theme }
       )
