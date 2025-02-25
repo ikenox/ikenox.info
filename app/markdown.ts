@@ -17,12 +17,14 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeExternalLinks from 'rehype-external-links';
-import { unified, type Plugin, type Processor } from 'unified';
+import { type Plugin, unified } from 'unified';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkExtractFrontmatter from 'remark-extract-frontmatter';
 import yaml from 'yaml';
 import { visit } from 'unist-util-visit';
 import type { Element, Text } from 'hast';
+
+import { object, record, parse, unknown, string, undefinedable } from 'valibot';
 
 export type ProcessResult = {
   content: string;
@@ -35,39 +37,50 @@ export const processMarkdown = async (
 ): Promise<ProcessResult> => {
   const processor = await getProcessor();
   const result = await processor.process(markdownContent.trim());
-  console.log(result.data['description']);
+  const data = parse(ProcessResultDataSchema, result.data);
   return {
     content: String(result),
-    frontMatter: result.data['frontMatter'],
-    description: result.data['description'],
+    frontMatter: data.frontMatter,
+    description: data.description,
   };
 };
 
+const ProcessResultDataSchema = object({
+  frontMatter: record(string(), unknown()),
+  description: undefinedable(string()),
+});
+
+type Processor =
+  ReturnType<typeof createProcessor> extends Promise<infer T> ? T : never;
 let _processor: Processor | undefined;
 const getProcessor = async (): Promise<Processor> => {
   if (!_processor) {
-    const highlighter = await createHighlighterCore({
-      langs: [javascript, typescript, shell, java, rust, html, vim, perl],
-      engine: createOnigurumaEngine(wasm),
-    });
-    _processor = unified()
-      .use(remarkParse)
-      .use(remarkFrontmatter, { type: 'yaml', marker: '-' })
-      .use(remarkExtractFrontmatter, { yaml: yaml.parse, name: 'frontMatter' })
-      .use(remarkGfm)
-      .use(remarkRehype)
-      .use(rehypeShikiFromHighlighter, highlighter, { theme })
-      .use(rehypeExternalLinks, {
-        target: '_blank',
-        rel: 'nofollow noopener noreferrer',
-      })
-      .use(rewriteImageUrl)
-      .use(changeFootnoteStyle)
-      .use(buildDescription)
-      .use(rehypeStringify)
-      .freeze();
+    _processor = await createProcessor();
   }
   return _processor;
+};
+
+const createProcessor = async () => {
+  const highlighter = await createHighlighterCore({
+    langs: [javascript, typescript, shell, java, rust, html, vim, perl],
+    engine: createOnigurumaEngine(wasm),
+  });
+  return unified()
+    .use(remarkParse)
+    .use(remarkFrontmatter, { type: 'yaml', marker: '-' })
+    .use(remarkExtractFrontmatter, { yaml: yaml.parse, name: 'frontMatter' })
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypeShikiFromHighlighter, highlighter as never, { theme })
+    .use(rehypeExternalLinks, {
+      target: '_blank',
+      rel: 'nofollow noopener noreferrer',
+    })
+    .use(rewriteImageUrl)
+    .use(changeFootnoteStyle)
+    .use(buildDescription)
+    .use(rehypeStringify)
+    .freeze();
 };
 
 const buildDescription: Plugin = () => {
@@ -78,7 +91,7 @@ const buildDescription: Plugin = () => {
       return text.length < 100;
     });
     if (text) {
-      file.data.description = `${text}...`;
+      file.data['description'] = `${text}...`;
     }
   };
 };
