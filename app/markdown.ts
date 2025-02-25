@@ -71,7 +71,10 @@ const createProcessor = async () => {
     .use(remarkExtractFrontmatter, { yaml: yaml.parse, name: 'frontMatter' })
     .use(remarkGfm)
     .use(remarkRehype)
-    .use(rehypeShikiFromHighlighter, highlighter as never, { theme })
+    .use(rehypeShikiFromHighlighter, highlighter as never, {
+      theme,
+      defaultLanguage: 'text',
+    })
     .use(rehypeExternalLinks, {
       target: '_blank',
       rel: 'nofollow noopener noreferrer',
