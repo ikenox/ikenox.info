@@ -33,7 +33,6 @@
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",
     "valibot": "1.0.0-rc.0",
-    "vfile-matter": "^5.0.0",
     "yaml": "^2.7.0"
   },
   "devDependencies": {
@@ -55,8 +54,6 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "feed": "^4.2.2",
     "globals": "^15.14.0",
-    "gray-matter": "^4.0.3",
-    "marked": "^15.0.7",
     "prettier": "^3.5.0",
     "react-router-devtools": "^1.1.0",
     "shiki": "^2.3.2",
