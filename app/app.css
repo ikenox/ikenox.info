@@ -31,7 +31,7 @@ ol {
   padding-left: 1em;
 }
 
-li.footnote-item > p {
+section.footnotes li p {
   margin: 0;
 }
 
@@ -83,5 +83,6 @@ blockquote {
 }
 
 .blog-post-content img {
+  width: 100%;
   max-width: 720px;
 }

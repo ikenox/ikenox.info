@@ -1,15 +1,14 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import matter from 'gray-matter';
 import { object, parse, string } from 'valibot';
-import { renderMarkdown } from '../markdown';
+import { processMarkdown } from '../markdown';
 
 export interface Post {
   slug: string;
   title: string;
   date: string;
   content: string;
-  description?: string;
+  description: string | undefined;
 }
 
 export const getAllPostsSlugs = async () => {
@@ -47,15 +46,11 @@ export const getPostBySlug = async (
   if (!fileContent) {
     return undefined;
   }
-  const { data, content } = matter(fileContent);
-  const meta = parse(postMetadataSchema, data);
+  const { content, description, frontMatter } =
+    await processMarkdown(fileContent);
+  const meta = parse(postMetadataSchema, frontMatter);
 
-  return {
-    slug,
-    title: meta.title,
-    date: meta.date,
-    content: await renderMarkdown(content),
-  };
+  return { slug, title: meta.title, date: meta.date, description, content };
 };
 
 const postMetadataSchema = object({ title: string(), date: string() });
