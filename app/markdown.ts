@@ -1,8 +1,5 @@
-import {
-  createHighlighter,
-  createHighlighterCore,
-  createOnigurumaEngine,
-} from 'shiki';
+import { createHighlighterCore } from 'shiki';
+import { createOnigurumaEngine } from '@shikijs/engine-oniguruma';
 import javascript from '@shikijs/langs/javascript';
 import typescript from '@shikijs/langs/typescript';
 import shell from '@shikijs/langs/shell';
@@ -20,32 +17,36 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified, type Processor } from 'unified';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkExtractFrontmatter from 'remark-extract-frontmatter';
+import yaml from 'yaml';
 
-export const renderMarkdown = async (
+export type ProcessResult = { content: string; frontMatter: unknown };
+
+export const processMarkdown = async (
   markdownContent: string
-): Promise<string> => {
+): Promise<ProcessResult> => {
   const processor = await getProcessor();
-  const result = await processor.process(markdownContent);
-  console.log('>>>>>>', result);
-  return String(result);
+  const result = await processor.process(markdownContent.trim());
+  return { content: String(result), frontMatter: result.data['frontMatter'] };
 };
 
 let _processor: Processor | undefined;
 const getProcessor = async (): Promise<Processor> => {
   if (!_processor) {
+    const highlighter = await createHighlighterCore({
+      langs: [javascript, typescript, shell, java, rust, html, vim, perl],
+      engine: createOnigurumaEngine(wasm),
+    });
     _processor = await unified()
       .use(remarkParse)
+      .use(remarkFrontmatter, { type: 'yaml', marker: '-' })
+      .use(remarkExtractFrontmatter, { yaml: yaml.parse, name: 'frontMatter' })
       .use(remarkGfm)
       .use(remarkRehype)
-      .use(
-        rehypeShikiFromHighlighter,
-        await createHighlighterCore({
-          langs: [javascript, typescript, shell, java, rust, html, vim, perl],
-          engine: createOnigurumaEngine(wasm),
-        }),
-        { theme }
-      )
-      .use(rehypeStringify);
+      .use(rehypeShikiFromHighlighter, highlighter, { theme })
+      .use(rehypeStringify)
+      .freeze();
     // .use(configureExternalLink)
     // .use(await buildHighlighter())
     // .use(convertImageUrl)
