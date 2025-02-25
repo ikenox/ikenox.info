@@ -16,10 +16,12 @@ import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { unified, type Processor } from 'unified';
+import rehypeExternalLinks from 'rehype-external-links';
+import { unified, type Plugin, type Processor } from 'unified';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkExtractFrontmatter from 'remark-extract-frontmatter';
 import yaml from 'yaml';
+import { visit } from 'unist-util-visit';
 
 export type ProcessResult = { content: string; frontMatter: unknown };
 
@@ -38,57 +40,38 @@ const getProcessor = async (): Promise<Processor> => {
       langs: [javascript, typescript, shell, java, rust, html, vim, perl],
       engine: createOnigurumaEngine(wasm),
     });
-    _processor = await unified()
+    _processor = unified()
       .use(remarkParse)
       .use(remarkFrontmatter, { type: 'yaml', marker: '-' })
       .use(remarkExtractFrontmatter, { yaml: yaml.parse, name: 'frontMatter' })
       .use(remarkGfm)
       .use(remarkRehype)
       .use(rehypeShikiFromHighlighter, highlighter, { theme })
+      .use(rehypeExternalLinks, {
+        target: '_blank',
+        rel: 'nofollow noopener noreferrer',
+      })
+      .use(rewriteImageUrl)
       .use(rehypeStringify)
       .freeze();
-    // .use(configureExternalLink)
-    // .use(await buildHighlighter())
-    // .use(convertImageUrl)
     // .use(footnote);
   }
   return _processor;
 };
 
-const configureExternalLink = (md: MarkdownIt) => {
-  const defaultLinkOpenRender =
-    md.renderer.rules['link_open'] ||
-    ((tokens, idx, options, env, self) =>
-      self.renderToken(tokens, idx, options));
-  md.renderer.rules['link_open'] = (tokens, idx, options, env, self) => {
-    const target = tokens[idx];
-    if (target) {
-      target.attrSet('target', '_blank');
-      target.attrSet('rel', 'noopener');
-    }
-    return defaultLinkOpenRender(tokens, idx, options, env, self);
-  };
-};
-
-const convertImageUrl = (md: MarkdownIt) => {
-  const defaultImageRender =
-    md.renderer.rules.image ||
-    ((tokens, idx, options, env, self) =>
-      self.renderToken(tokens, idx, options));
-  md.renderer.rules.image = (tokens, idx, options, env, self) => {
-    const target = tokens[idx];
-    if (target) {
-      const src = target.attrGet('src');
-      target.attrSet('width', '100%');
-      if (
-        src &&
-        !src.startsWith('http://') &&
-        !src.startsWith('https://') &&
-        !src.startsWith('/')
-      ) {
-        target.attrSet('src', join('/blog-posts', src));
+const rewriteImageUrl: Plugin = () => {
+  return (tree) =>
+    visit(tree, 'element', (node: import('hast').Element) => {
+      if (node.tagName === 'img') {
+        const src = node.properties['src'];
+        if (
+          typeof src === 'string' &&
+          !src.startsWith('http://') &&
+          !src.startsWith('https://') &&
+          !src.startsWith('/')
+        ) {
+          node.properties['src'] = join('/blog-posts', src);
+        }
       }
-    }
-    return defaultImageRender(tokens, idx, options, env, self);
-  };
+    });
 };

@@ -83,5 +83,6 @@ blockquote {
 }
 
 .blog-post-content img {
+  width: 100%;
   max-width: 720px;
 }
