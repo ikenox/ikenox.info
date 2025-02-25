@@ -24,14 +24,23 @@ import yaml from 'yaml';
 import { visit } from 'unist-util-visit';
 import type { Element, Text } from 'hast';
 
-export type ProcessResult = { content: string; frontMatter: unknown };
+export type ProcessResult = {
+  content: string;
+  frontMatter: unknown;
+  description: string | undefined;
+};
 
 export const processMarkdown = async (
   markdownContent: string
 ): Promise<ProcessResult> => {
   const processor = await getProcessor();
   const result = await processor.process(markdownContent.trim());
-  return { content: String(result), frontMatter: result.data['frontMatter'] };
+  console.log(result.data['description']);
+  return {
+    content: String(result),
+    frontMatter: result.data['frontMatter'],
+    description: result.data['description'],
+  };
 };
 
 let _processor: Processor | undefined;
@@ -54,10 +63,24 @@ const getProcessor = async (): Promise<Processor> => {
       })
       .use(rewriteImageUrl)
       .use(changeFootnoteStyle)
+      .use(buildDescription)
       .use(rehypeStringify)
       .freeze();
   }
   return _processor;
+};
+
+const buildDescription: Plugin = () => {
+  return (tree, file) => {
+    let text = '';
+    visit(tree, 'text', (t: Text) => {
+      text += t.value;
+      return text.length < 100;
+    });
+    if (text) {
+      file.data.description = `${text}...`;
+    }
+  };
 };
 
 const changeFootnoteStyle: Plugin = () => {
