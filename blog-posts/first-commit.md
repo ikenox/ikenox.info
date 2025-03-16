@@ -1,6 +1,6 @@
 ---
 title: first commit
-date: '2017-10-15'
+createdAt: '2017-10-15'
 ---
 
 [Jekyll](https://jekyllrb-ja.github.io/) + [GitHub Pages](https://pages.github.com/)

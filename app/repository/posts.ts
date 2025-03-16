@@ -1,14 +1,15 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { object, parse, string } from 'valibot';
+import { object, optional, parse, string } from 'valibot';
 import { processMarkdown } from '../markdown';
 
 export interface Post {
   slug: string;
   title: string;
-  date: string;
+  createdAt: string;
+  updatedAt?: string | undefined;
   content: string;
-  description: string | undefined;
+  description?: string | undefined;
 }
 
 export const getAllPostsSlugs = async () => {
@@ -28,7 +29,7 @@ export const getAllPosts = async (): Promise<Post[]> => {
     )
   )
     .filter((post) => post != null)
-    .sort((a, b) => (a.date > b.date ? -1 : 1));
+    .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 };
 
 export const getPostBySlug = async (
@@ -50,9 +51,20 @@ export const getPostBySlug = async (
     await processMarkdown(fileContent);
   const meta = parse(postMetadataSchema, frontMatter);
 
-  return { slug, title: meta.title, date: meta.date, description, content };
+  return {
+    slug,
+    title: meta.title,
+    createdAt: meta.createdAt,
+    updatedAt: meta.updatedAt,
+    description,
+    content,
+  };
 };
 
-const postMetadataSchema = object({ title: string(), date: string() });
+const postMetadataSchema = object({
+  title: string(),
+  createdAt: string(),
+  updatedAt: optional(string()),
+});
 
 const postsDirectory = join(process.cwd(), './blog-posts');

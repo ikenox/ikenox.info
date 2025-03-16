@@ -1,6 +1,6 @@
 ---
 title: 'ブログをCloudflare Pages + Astroに載せ替えました'
-date: '2023-10-07'
+createdAt: '2023-10-07'
 ---
 
 仕事でNode.jsを触っていて、その流れでSSRやSSGといった文脈にも興味を持つようになり、その中でも最近よく話題になっているのを見かけるAstroとCloudflareにブログを載せ替えてみました。

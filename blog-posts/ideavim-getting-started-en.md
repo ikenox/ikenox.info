@@ -1,6 +1,6 @@
 ---
 title: Getting Started with IdeaVim
-date: '2019-01-25'
+createdAt: '2019-01-25'
 lang: en
 ---
 

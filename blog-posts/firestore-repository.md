@@ -1,6 +1,6 @@
 ---
 title: TypeScript製の軽量Firestoreクライアント「firestore-repository」を作った
-date: '2025-02-19'
+createdAt: '2025-02-19'
 ---
 
 ## firestore-repository

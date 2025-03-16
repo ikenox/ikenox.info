@@ -1,6 +1,6 @@
 ---
 title: MouseX::Types::Enum - PerlでJavaのenum(列挙型)のようなクラスを実現するモジュール
-date: '2018-05-20'
+createdAt: '2018-05-20'
 ---
 
 [MouseX::Types::Enum](https://metacpan.org/pod/MouseX::Types::Enum)
