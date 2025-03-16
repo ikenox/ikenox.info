@@ -56,7 +56,13 @@ export default function Post({ loaderData: { post } }: Route.ComponentProps) {
     <article>
       <h1>{post.title}</h1>
       <p>
-        <time dateTime={post.date}>{post.date}</time>
+        <time dateTime={post.createdAt}>{post.createdAt}</time>
+        {post.updatedAt && (
+          <span>
+            {' '}
+            (更新: <time dateTime={post.updatedAt}>{post.updatedAt}</time>)
+          </span>
+        )}
       </p>
       <p>
         <TweetButton url={url} text={post.title}></TweetButton>

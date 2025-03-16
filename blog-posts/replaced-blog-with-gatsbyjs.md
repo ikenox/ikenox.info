@@ -1,6 +1,6 @@
 ---
 title: ブログをGatsbyJSに載せ替えました
-date: '2018-08-04'
+createdAt: '2018-08-04'
 ---
 
 ### GatsbyJS

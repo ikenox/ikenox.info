@@ -1,6 +1,6 @@
 ---
 title: IdeaVimで「IntelliJでいつも使ってるあの機能」のaction名を探し当てる
-date: '2019-06-11'
+createdAt: '2019-06-11'
 updatedDate: '2019-06-11'
 ---
 

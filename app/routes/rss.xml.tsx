@@ -18,7 +18,7 @@ export async function loader() {
       title: post.title,
       link: `https://ikenox.info/blog/${post.slug}`,
       ...(post.description ? { description: post.description } : {}),
-      date: new Date(`${post.date}T00:00:00+0900`),
+      date: new Date(`${post.createdAt}T00:00:00+0900`),
     });
   }
 
