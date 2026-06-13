@@ -1,6 +1,6 @@
 import { getPostBySlug } from '../repository/posts';
 import type { Route } from './+types/blog-post';
-import { data, redirect, useLocation } from 'react-router';
+import { data, redirect, Link, useLocation } from 'react-router';
 import { TweetButton } from '../components/TweetButton';
 import { isBuildPhase } from '../env';
 import { localeFromPathname, t } from '../i18n';
@@ -83,6 +83,13 @@ export default function Post({ loaderData: { post } }: Route.ComponentProps) {
   return (
     <article lang={post.contentLocale}>
       <h1>{post.title}</h1>
+      {post.contentLocale === 'en' && (
+        <aside className="translation-notice">
+          This is a machine translation (by an LLM) of the author&apos;s
+          original Japanese article. You can read the{' '}
+          <Link to={`/blog/${post.slug}`}>original article here</Link>.
+        </aside>
+      )}
       <p>
         <time dateTime={post.createdAt}>{post.createdAt}</time>
         {post.updatedAt && (
