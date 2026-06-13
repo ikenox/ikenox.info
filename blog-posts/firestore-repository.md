@@ -1,6 +1,7 @@
 ---
 title: TypeScript製の軽量Firestoreクライアント「firestore-repository」を作った
 createdAt: '2025-02-19'
+updatedAt: '2026-06-13'
 ---
 
 ## firestore-repository
@@ -44,22 +45,29 @@ npm install firestore-repository @firestore-repository/firebase-js-sdk
 スキーマを共有することで、フロントエンドとバックエンドそれぞれで同じコレクションのドキュメントを一貫性を保った形でread(+write)できます。
 
 ```ts
-import { mapTo, data, rootCollection } from 'firestore-repository/schema';
+import {
+  rootCollection,
+  string,
+  double,
+  map,
+  optional,
+  literal,
+  array,
+} from 'firestore-repository/schema';
 
 // define a collection
 const users = rootCollection({
   name: 'Users',
-  id: mapTo('userId'),
-  data: data<{
-    name: string;
-    profile: { age: number; gender?: 'male' | 'female' };
-    tag: string[];
-  }>(),
+  schema: {
+    name: string(),
+    profile: map({ age: double(), gender: optional(literal('male', 'female')) }),
+    tag: array(string()),
+  },
 });
 ```
 
-備考: スキーマ定義において`id`や`data`に指定している値の実態は、単に`from` `to`という2つの関数をペアにしただけのものです。`from`はFirestoreからアプリレイヤに取り出す際の変換の関数で、`to`はアプリレイヤからFirestoreに保存する際のデータの変換の関数です。この双方向の変換定義について、汎用的によく使うであろうものはライブラリでutility的に提供していますが、独自の変換処理をしたい場合は自前で好きに変換ロジックを書くこともできます。  
-上記の話を踏まえると、このライブラリにおけるスキーマ定義というのは、単にFirestoreのドキュメントの各コンポーネント(ID、データ、コレクションパス)それぞれの双方向変換の定義を寄せ集めただけのものと言えます。
+備考: スキーマ定義では、コレクション名(`name`)と、ドキュメントデータの各フィールドの型(`schema`)を指定します。フィールドの型としては、`string` / `double` / `bool` / `timestamp` といったプリミティブな型のほか、`map`(ネストしたオブジェクト)、`array`、`union`、`literal`、`optional` / `nullable` など一通りのものが用意されており、これらを組み合わせてスキーマを表現できます。  
+なお、ドキュメントはデフォルトでは`{ id, data }`という形のシンプルなモデルとして読み書きされますが、アプリ独自のモデル型へ変換したい場合は後述の`Mapper`でカスタマイズできます。
 
 ### Repositoryインスタンスの作成
 
@@ -68,15 +76,15 @@ const users = rootCollection({
 ```ts
 // For backend
 import { Firestore } from '@google-cloud/firestore';
-import { Repository } from '@firestore-repository/google-cloud-firestore';
+import { rootCollectionRepository } from '@firestore-repository/google-cloud-firestore';
 const db = new Firestore();
 
 // For web frontend
 import { getFirestore } from '@firebase/firestore';
-import { Repository } from '@firestore-repository/firebase-js-sdk';
+import { rootCollectionRepository } from '@firestore-repository/firebase-js-sdk';
 const db = getFirestore();
 
-const repository = new Repository(users, db);
+const repository = rootCollectionRepository(db, users);
 ```
 
 使うための準備としては以上で、あとは作成したRepositoryインスタンスを通じて各種操作が可能です。
@@ -91,28 +99,28 @@ Repositoryのインターフェースもバックエンドとフロントエン�
 ```ts
 // Set a document
 await repository.set({
-  userId: 'user1',
-  name: 'John Doe',
-  profile: { age: 42, gender: 'male' },
-  tag: ['new'],
+  id: 'user1',
+  data: { name: 'John Doe', profile: { age: 42, gender: 'male' }, tag: ['new'] },
 });
 
 // Get a document
-const doc = await repository.get({ userId: 'user1' });
+const doc = await repository.get('user1');
 // doc = {
-//   userId: 'user1',
-//   name: 'John Doe',
-//   profile: { age: 42, gender: 'male' },
-//   tag: ['new'],
+//   id: 'user1',
+//   data: {
+//     name: 'John Doe',
+//     profile: { age: 42, gender: 'male' },
+//     tag: ['new'],
+//   },
 // }
 
 // Listen a document
-repository.getOnSnapshot({ userId: 'user1' }, (doc) => {
+repository.getOnSnapshot('user1', (doc) => {
   console.log(doc);
 });
 
 // Delete a document
-await repository.delete({ userId: 'user2' });
+await repository.delete('user2');
 ```
 
 ### クエリ
@@ -123,13 +131,13 @@ await repository.delete({ userId: 'user2' });
 クエリ定義についても、バックエンド/フロントエンドで共有可能です。
 
 ```ts
-import { condition as $, limit, query } from 'firestore-repository/query';
+import { eq, gte, limit, query, where } from 'firestore-repository/query';
+import { average, count, sum } from 'firestore-repository/aggregate';
 
 // Define a query
 const q = query(
-  users,
-  $('profile.age', '>=', 20),
-  $('profile.gender', '==', 'male'),
+  { collection: users },
+  where(gte('profile.age', 20), eq('profile.gender', 'male')),
   limit(10)
 );
 
@@ -156,13 +164,13 @@ console.log(`avg:${result.avgAge} sum:${result.sumAge} count:${result.count}`);
 また、指定した値がフィールドの型と合っていない場合にもコンパイルエラーになります。
 
 ```ts
-const validQuery = query(users, $('profile.age', '>=', 20));
+const validQuery = query({ collection: users }, where(gte('profile.age', 20)));
 
-const invalidQuery1 = query(users, $('profile.foo', '>=', 20));
-//                                    ~~~~~~~~~~~ スキーマで定義されていないフィールド名のためコンパイルエラー
+const invalidQuery1 = query({ collection: users }, where(gte('profile.foo', 20)));
+//                                                            ~~~~~~~~~~~ スキーマで定義されていないフィールド名のためコンパイルエラー
 
-const invalidQuery2 = query(users, $('profile.age', '>=', 'foo'));
-//                                                         ~~~ 数値型でないためコンパイルエラー
+const invalidQuery2 = query({ collection: users }, where(gte('profile.age', 'foo')));
+//                                                                           ~~~ 数値型でないためコンパイルエラー
 ```
 
 ### バッチ操作
@@ -174,57 +182,53 @@ const invalidQuery2 = query(users, $('profile.age', '>=', 'foo'));
 // Set multiple documents
 await repository.batchSet([
   {
-    userId: 'user1',
-    name: 'Alice',
-    profile: { age: 30, gender: 'female' },
-    tag: ['new'],
+    id: 'user1',
+    data: { name: 'Alice', profile: { age: 30, gender: 'female' }, tag: ['new'] },
   },
   {
-    userId: 'user2',
-    name: 'Bob',
-    profile: { age: 20, gender: 'male' },
-    tag: [],
+    id: 'user2',
+    data: { name: 'Bob', profile: { age: 20, gender: 'male' }, tag: [] },
   },
 ]);
 
 // Delete multiple documents
-await repository.batchDelete([{ userId: 'user1' }, { userId: 'user2' }]);
+await repository.batchDelete(['user1', 'user2']);
 
 // Get multiple documents (backend only)
-const users = await repository.batchGet([
-  { userId: 'user1' },
-  { userId: 'user2' },
-]);
+const users = await repository.batchGet(['user1', 'user2']);
 ```
 
 また、`set`や`delete`などの各種書き込み系のメソッドの第二引数では `tx` パラメータに公式ライブラリのバッチオブジェクトを渡せるようになっており、それを利用することで複数種別の書き込み操作を1つのバッチにまとめることが可能です。
 
 ```ts
 // For backend
-const batch = db.writeBatch();
+const batch = db.batch();
 // For web frontend
 import { writeBatch } from '@firebase/firestore';
-const batch = writeBatch();
+const batch = writeBatch(db);
 
 await repository.set(
   {
-    userId: 'user3',
-    name: 'Bob',
-    profile: { age: 20, gender: 'male' },
-    tag: [],
+    id: 'user3',
+    data: { name: 'Bob', profile: { age: 20, gender: 'male' }, tag: [] },
   },
   { tx: batch }
 );
 await repository.batchSet(
   [
-    /* ... */
+    {
+      id: 'user7',
+      data: { name: 'Alice', profile: { age: 30, gender: 'female' }, tag: ['new'] },
+    },
+    {
+      id: 'user8',
+      data: { name: 'Carol', profile: { age: 25, gender: 'female' }, tag: [] },
+    },
   ],
   { tx: batch }
 );
-await repository.delete({ userId: 'user4' }, { tx: batch });
-await repository.batchDelete([{ userId: 'user5' }, { userId: 'user6' }], {
-  tx: batch,
-});
+await repository.delete('user4', { tx: batch });
+await repository.batchDelete(['user5', 'user6'], { tx: batch });
 
 await batch.commit();
 ```
@@ -238,41 +242,201 @@ await batch.commit();
 import { runTransaction } from '@firebase/firestore';
 
 // Or, please use db.runTransaction for backend
-await runTransaction(async (tx) => {
+await runTransaction(db, async (tx) => {
   // Get
-  const doc = await repository.get({ userId: 'user1' }, { tx });
+  const doc = await repository.get('user1', { tx });
 
   if (doc) {
-    doc.tag = [...doc.tag, 'new-tag'];
+    doc.data.tag = [...doc.data.tag, 'new-tag'];
     // Set
     await repository.set(doc, { tx });
     await repository.batchSet(
       [
-        { ...doc, userId: 'user2' },
-        { ...doc, userId: 'user3' },
+        { ...doc, id: 'user2' },
+        { ...doc, id: 'user3' },
       ],
       { tx }
     );
   }
 
   // Delete
-  await repository.delete({ userId: 'user4' }, { tx });
-  await repository.batchDelete([{ userId: 'user5' }, { userId: 'user6' }], {
-    tx,
-  });
+  await repository.delete('user4', { tx });
+  await repository.batchDelete(['user5', 'user6'], { tx });
 });
+```
+
+### サブコレクション
+
+Firestoreのサブコレクションにも対応しています。サブコレクションは`subCollection`で定義し、`parent`に親コレクションの名前を階層順(ルート側から)に並べた配列を指定します。例えば`Users/{userId}/Posts`なら`['Users']`、さらに深い`Users/{userId}/Posts/{postId}/Comments`なら`['Users', 'Posts']`となります。
+
+ルートコレクションとの違いは、ドキュメントを特定するためのIDが「親ドキュメントのID + 自身のID」のタプル(配列)になる点だけです。クエリ・バッチ・トランザクションなどそれ以外の操作は、ルートコレクションとまったく同じインターフェースで利用できます。  
+これにより、ネストしたコレクション構造であっても、親子のパスを型で安全に表現しつつ、ルートコレクションと変わらない使い勝手でアクセスできます。
+
+```ts
+import { subCollection, string } from 'firestore-repository/schema';
+
+// For backend
+import { subcollectionRepository } from '@firestore-repository/google-cloud-firestore';
+
+// For web frontend
+import { subcollectionRepository } from '@firestore-repository/firebase-js-sdk';
+
+const posts = subCollection({
+  name: 'Posts',
+  schema: { title: string() },
+  parent: ['Users'] as const,
+});
+
+const postRepository = subcollectionRepository(db, posts);
+
+// Set a document (id is [parentDocId, docId])
+await postRepository.set({
+  id: ['user1', 'post1'],
+  data: { title: 'My first post' },
+});
+
+// Get a document
+const post = await postRepository.get(['user1', 'post1']);
+```
+
+なお、タプル形式のIDが扱いづらい場合は、後述の`Mapper`を使ってIDを`{ userId: string; postId: string }`のような独自のオブジェクトに変換することもできます。
+
+```ts
+const postRepository = repositoryWithMapper(db, posts, {
+  // 独自のIDオブジェクト ⇄ タプルの相互変換を定義するだけ
+  toDocRef: (id) => [id.userId, id.postId],
+  fromFirestore: (doc) => ({
+    id: { userId: doc.id[0], postId: doc.id[1] },
+    data: doc.data,
+  }),
+  toFirestore: (post) => ({ id: [post.id.userId, post.id.postId], data: post.data }),
+});
+
+// IDをオブジェクトで指定できるようになる
+const post = await postRepository.get({ userId: 'user1', postId: 'post1' });
+```
+
+## 発展的な使い方
+
+ここからは必須ではありませんが、知っておくとより便利に使える発展的な内容を紹介します。
+
+### serverTimestampやincrementなどの特殊な値
+
+Firestoreには、書き込み時にだけ使えるサーバー側の特殊な値(サーバータイムスタンプ、数値のインクリメント、配列要素の追加/削除)があります。これらは`firestore-repository/server-value`から提供されるヘルパーを使って、通常のフィールド値と同じように渡せます。
+
+例えば`serverTimestamp()`を使うと、書き込み時にサーバー側のタイムスタンプを記録できます。
+
+```ts
+import { serverTimestamp } from 'firestore-repository/server-value';
+
+// ここでは users スキーマに updatedAt: timestamp() が追加で定義されているものとする
+await repository.set({
+  id: 'user1',
+  data: {
+    name: 'John Doe',
+    profile: { age: 42, gender: 'male' },
+    tag: ['new'],
+    updatedAt: serverTimestamp(), // サーバー側のタイムスタンプを書き込む
+  },
+});
+```
+
+また、`timestamp()`型のフィールドはread時に自動的に`Date`へ変換されて返ってくるため、アプリレイヤでは`firestore.Timestamp`を意識せずそのまま`Date`として扱えます。
+
+> 備考: `increment`や`arrayUnion` / `arrayRemove`も同じくヘルパーとして用意されていますが、現状の`set`は対象ドキュメントを丸ごと上書きするため、これらを`set`で使っても「既存値への加算」や「既存配列への追加/削除」としては機能しません（例えば`increment(5)`は既存値+5ではなく、単に`5`で上書きするだけになります）。`serverTimestamp`のように既存値に依存しない値は問題なく使えます。
+>
+> これらをFirestore本来の意味で動かすには`update`/`merge`相当の操作が必要ですが、これは「ドキュメントの一部分だけを更新する」という部分更新であり、「集約をまるごと取得・永続化する」というRepository Patternの考え方と噛み合わないため、このライブラリでは今のところ提供していません。
+
+### カスタムMapper
+
+`rootCollectionRepository`などで作成したRepositoryは、デフォルトでは`{ id: string, data: ... }`という形のモデルを読み書きします。これは公式のFirestoreライブラリのデータ形式に近いですが、アプリケーション側では「IDとデータがフラットにまとまった独自のモデル型」で取り回したいケースも多いはずです。
+
+そういった場合は、独自の`Mapper`を定義して`repositoryWithMapper`でRepositoryを作成することで、FirestoreドキュメントとアプリのモデルとをRepository内で自動的に相互変換できます。これにより、アプリケーションコードからは`{ id, data }`という構造を意識せず、後ろにFirestoreがあることを意識させない純粋なドメインモデルとして扱えるようになります。
+
+`Mapper`は以下の3つの関数で構成されます。
+
+- `toDocRef`: アプリのモデルのIDをFirestoreのドキュメント参照に変換する
+- `fromFirestore`: Firestoreのドキュメントを読み込み用のモデルに変換する
+- `toFirestore`: 書き込み用のモデルをFirestoreのドキュメントに変換する
+
+この`Mapper`の定義自体も型安全に記述できます。`fromFirestore`の引数(Firestoreから取り出したドキュメント)や`toFirestore`の返り値(Firestoreへ書き込むドキュメント)の型は、スキーマ定義から自動的に導出されます。そのため、ドメインモデルとFirestoreドキュメントの間の変換ロジックを、型のサポートを受けながら(フィールド名の補完や型の不一致のコンパイルエラーを効かせつつ)記述できます。
+
+```ts
+import { type AppModel, type Mapper } from 'firestore-repository/repository';
+
+// For backend
+import { repositoryWithMapper } from '@firestore-repository/google-cloud-firestore';
+// For web frontend
+import { repositoryWithMapper } from '@firestore-repository/firebase-js-sdk';
+
+// Define your application model type
+type User = {
+  userId: string;
+  name: string;
+  profile: { age: number; gender?: 'male' | 'female' };
+  tag: string[];
+};
+
+// Define a mapper
+const userMapper: Mapper<typeof users, AppModel<string, User, User>> = {
+  toDocRef: (id) => [id],
+  fromFirestore: (doc) => ({ userId: doc.id[0], ...doc.data }),
+  toFirestore: (user) => ({
+    id: [user.userId],
+    data: { name: user.name, profile: user.profile, tag: user.tag },
+  }),
+};
+
+const repository = repositoryWithMapper(db, users, userMapper);
+
+// Now the repository accepts and returns your custom User type directly
+await repository.set({
+  userId: 'user1',
+  name: 'Alice',
+  profile: { age: 30, gender: 'female' },
+  tag: ['new'],
+});
+const user: User | undefined = await repository.get('user1');
+await repository.delete('user1');
+```
+
+#### 読み込み用と書き込み用で別々のモデル型を使う
+
+カスタムMapperでは読み込み用と書き込み用で別々のモデル型を指定することもできます。  
+例えば「書き込み時は`updatedAt`に`'server-time'`を指定するとサーバー側で現在時刻が書き込まれ、読み込み時は`Date`として受け取る」といった、read/writeで非対称なドメインモデルを表現できます。ライブラリ固有の`serverTimestamp()`は`Mapper`の中に隠蔽してしまえるので、アプリ側のモデルは分かりやすい表現に保てます。
+
+```ts
+import { serverTimestamp } from 'firestore-repository/server-value';
+
+// users スキーマに updatedAt: timestamp() がある前提
+type User = { userId: string; name: string; updatedAt: Date };
+type UserWrite = { userId: string; name: string; updatedAt: Date | 'server-time' };
+
+const userMapper: Mapper<typeof users, AppModel<string, User, UserWrite>> = {
+  toDocRef: (id) => [id],
+  fromFirestore: (doc) => ({ userId: doc.id[0], name: doc.data.name, updatedAt: doc.data.updatedAt }),
+  toFirestore: (user) => ({
+    id: [user.userId],
+    data: {
+      name: user.name,
+      // 'server-time' のときだけサーバータイムスタンプに変換する
+      updatedAt: user.updatedAt === 'server-time' ? serverTimestamp() : user.updatedAt,
+    },
+  }),
+};
+const repository = repositoryWithMapper(db, users, userMapper);
+
+// 書き込み時は 'server-time' を指定するとサーバータイムスタンプが記録される
+await repository.set({ userId: 'user1', name: 'Alice', updatedAt: 'server-time' });
+
+// 読み込み時は Date として返ってくる
+const user = await repository.get('user1');
+const updatedAt: Date = user!.updatedAt;
 ```
 
 ## まとめ
 
 という感じで、一通りのことができる便利なFirestoreクライアントライブラリを作れました。  
 よければ使ってみてください。
-
-### 残課題
-
-- `serverTimestamp`や`increment`などの、Firestoreへの書き込み時にだけ利用できる特殊な値の扱いについて。ライブラリの裏の構造としてはこの辺を扱うための土台は用意できているが、表向きどのように提供すべきか悩ましい（そもそもこれらの概念は手続き的であり、Repository Patternの思想からも外れる）。
-- Firestoreのタイムスタンプ値はアプリレイヤでは`Date`にして取り回したいが、現状だと`firestore.Timestamp`から`Date`への変換を明示的に記述しなくてはならず面倒。
-  - 一応、`Object.entries(...)` とかを使ってドキュメントデータを走査してTimestampフィールドを見つけたら`Date`に変換して回るといった処理を書くこともできなくはないが、処理効率は悪いのでライブラリ側からutilityとして提供するのは躊躇われる。
-  - これについては公式ライブラリ側で何か汎用的な仕組みを用意してほしいところ...
 
 [^1]: フロントエンド側については、一括取得は公式クライアントとしても未サポートとなっている [https://github.com/firebase/firebase-js-sdk/issues/1176](https://github.com/firebase/firebase-js-sdk/issues/1176)
