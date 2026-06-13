@@ -21,20 +21,18 @@ export const pathForLocale = (pathname: string, locale: Locale): string => {
   return base === '/' ? '/en' : `/en${base}`;
 };
 
-type Dict = { siteDescription: string; updated: string; switchTo: string };
+type Dict = { siteDescription: string; updated: string };
 
 const dictionaries: Record<Locale, Dict> = {
   ja: {
     siteDescription:
       'ソフトウェアエンジニアリングに関する知見や日々の記録を綴る技術ブログ兼ポートフォリオサイトです。',
     updated: '更新',
-    switchTo: 'English',
   },
   en: {
     siteDescription:
       'A tech blog and portfolio site sharing software engineering insights, experiences, and thoughts.',
     updated: 'Updated',
-    switchTo: '日本語',
   },
 };
 

@@ -9,6 +9,7 @@ import {
   useLocation,
 } from 'react-router';
 
+import { Fragment } from 'react';
 import type { Route } from './+types/root';
 import './app.css';
 import { localeFromPathname, pathForLocale, t } from './i18n';
@@ -22,8 +23,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const uiLocale = localeFromPathname(location.pathname);
   const homePath = uiLocale === 'ja' ? '/' : '/en';
   const isTopPage = location.pathname === homePath;
-  const switchLocale = uiLocale === 'ja' ? 'en' : 'ja';
-  const switchPath = pathForLocale(location.pathname, switchLocale);
+  const localeLinks = [
+    { locale: 'ja' as const, label: '日本語' },
+    { locale: 'en' as const, label: 'EN' },
+  ];
 
   const headers = {
     siteName: 'ikenox.info',
@@ -90,7 +93,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            <Link to={switchPath}>{t(uiLocale).switchTo}</Link>
+            {localeLinks.map(({ locale, label }, i) => (
+              <Fragment key={locale}>
+                {i > 0 && ' / '}
+                {locale === uiLocale ? (
+                  label
+                ) : (
+                  <Link to={pathForLocale(location.pathname, locale)}>
+                    {label}
+                  </Link>
+                )}
+              </Fragment>
+            ))}
           </span>
         </header>
         {children}
