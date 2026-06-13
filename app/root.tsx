@@ -25,19 +25,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const homePath = uiLocale === 'ja' ? '/' : '/en';
   const isTopPage = location.pathname === homePath;
 
-  // On a blog post page, English is only reachable when an English variant
-  // exists; elsewhere (home, etc.) both locales are always available.
+  // Hide the language switcher entirely on a blog post that has no English
+  // variant; elsewhere (home, etc.) both locales are always available.
   const matches = useMatches();
   const postMatch = matches.find(
     (m) => (m.data as { post?: unknown } | undefined)?.post != null
   );
   const post = (postMatch?.data as { post?: { hasEn?: boolean } } | undefined)
     ?.post;
-  const enAvailable = post ? post.hasEn === true : true;
+  const showSwitcher = post ? post.hasEn === true : true;
 
   const localeLinks = [
-    { locale: 'ja' as const, label: '日本語', available: true },
-    { locale: 'en' as const, label: 'EN', available: enAvailable },
+    { locale: 'ja' as const, label: 'JP' },
+    { locale: 'en' as const, label: 'EN' },
   ];
 
   const headers = {
@@ -79,23 +79,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            {localeLinks.map(({ locale, label, available }, i) => (
-              <Fragment key={locale}>
-                {i > 0 && '/'}
-                {locale === uiLocale ? (
-                  label
-                ) : available ? (
-                  <Link to={pathForLocale(location.pathname, locale)}>
-                    {label}
-                  </Link>
-                ) : (
-                  <span className="lang-unavailable">{label}</span>
-                )}
-              </Fragment>
-            ))}
-          </span>
-          {' | '}
-          <span>
             <a href="https://x.com/ikenox_" target="_blank" rel="noreferrer">
               X
             </a>
@@ -120,6 +103,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
               RSS
             </a>
           </span>
+          {showSwitcher && (
+            <span className="lang-switcher">
+              {localeLinks.map(({ locale, label }, i) => (
+                <Fragment key={locale}>
+                  {i > 0 && '/'}
+                  {locale === uiLocale ? (
+                    label
+                  ) : (
+                    <Link to={pathForLocale(location.pathname, locale)}>
+                      {label}
+                    </Link>
+                  )}
+                </Fragment>
+              ))}
+            </span>
+          )}
         </header>
         {children}
         <ScrollRestoration />

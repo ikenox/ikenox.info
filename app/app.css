@@ -82,8 +82,14 @@ blockquote {
   font-weight: bold;
 }
 
-.lang-unavailable {
-  color: var(--grey);
+header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.lang-switcher {
+  margin-left: auto;
 }
 
 .blog-post-content img {
