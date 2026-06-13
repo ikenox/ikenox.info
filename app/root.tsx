@@ -104,20 +104,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </a>
           </span>
           {showSwitcher && (
-            <span className="lang-switcher">
-              {localeLinks.map(({ locale, label }, i) => (
-                <Fragment key={locale}>
-                  {i > 0 && '/'}
-                  {locale === uiLocale ? (
-                    label
-                  ) : (
-                    <Link to={pathForLocale(location.pathname, locale)}>
-                      {label}
-                    </Link>
-                  )}
-                </Fragment>
-              ))}
-            </span>
+            <>
+              {' | '}
+              <span>
+                {localeLinks.map(({ locale, label }, i) => (
+                  <Fragment key={locale}>
+                    {i > 0 && '/'}
+                    {locale === uiLocale ? (
+                      label
+                    ) : (
+                      <Link to={pathForLocale(location.pathname, locale)}>
+                        {label}
+                      </Link>
+                    )}
+                  </Fragment>
+                ))}
+              </span>
+            </>
           )}
         </header>
         {children}
