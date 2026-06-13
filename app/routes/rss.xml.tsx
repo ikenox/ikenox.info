@@ -1,8 +1,13 @@
 import { Feed } from 'feed';
 import { getAllPosts } from '../repository/posts';
+import { localeFromPathname } from '../i18n';
+import type { Route } from './+types/rss.xml';
 
-export async function loader() {
-  const posts = await getAllPosts();
+export async function loader({ request }: Route.LoaderArgs) {
+  const uiLocale = localeFromPathname(new URL(request.url).pathname);
+  const posts = await getAllPosts(uiLocale);
+  const linkPrefix =
+    uiLocale === 'ja' ? 'https://ikenox.info' : 'https://ikenox.info/en';
 
   const feed = new Feed({
     title: 'ikenox.info',
@@ -16,7 +21,7 @@ export async function loader() {
   for (const post of posts) {
     feed.addItem({
       title: post.title,
-      link: `https://ikenox.info/blog/${post.slug}`,
+      link: `${linkPrefix}/blog/${post.slug}`,
       ...(post.description ? { description: post.description } : {}),
       date: new Date(`${post.createdAt}T00:00:00+0900`),
     });

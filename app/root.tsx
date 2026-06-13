@@ -11,6 +11,7 @@ import {
 
 import type { Route } from './+types/root';
 import './app.css';
+import { localeFromPathname, pathForLocale, t } from './i18n';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -18,17 +19,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname,
     'https://ikenox.info'
   ).toString();
-  const isTopPage = location.pathname === '/';
+  const uiLocale = localeFromPathname(location.pathname);
+  const homePath = uiLocale === 'ja' ? '/' : '/en';
+  const isTopPage = location.pathname === homePath;
+  const switchLocale = uiLocale === 'ja' ? 'en' : 'ja';
+  const switchPath = pathForLocale(location.pathname, switchLocale);
 
   const headers = {
     siteName: 'ikenox.info',
-    description:
-      'A tech blog and portfolio site sharing software engineering insights, experiences, and thoughts.',
+    description: t(uiLocale).siteDescription,
     image: 'https://ikenox.info/icon.png',
   };
 
   return (
-    <html lang="en">
+    <html lang={uiLocale}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -56,7 +60,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <header>
           <span className="logo">
-            {isTopPage ? 'ikenox.info' : <Link to="/">ikenox.info</Link>}
+            {isTopPage ? 'ikenox.info' : <Link to={homePath}>ikenox.info</Link>}
           </span>
           {' | '}
           <span>
@@ -76,9 +80,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            <a href="/rss.xml" target="_blank" rel="noreferrer">
+            <a
+              href={uiLocale === 'ja' ? '/rss.xml' : '/en/rss.xml'}
+              target="_blank"
+              rel="noreferrer"
+            >
               RSS
             </a>
+          </span>
+          {' | '}
+          <span>
+            <Link to={switchPath}>{t(uiLocale).switchTo}</Link>
           </span>
         </header>
         {children}
