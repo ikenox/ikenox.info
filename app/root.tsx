@@ -7,10 +7,13 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useMatches,
 } from 'react-router';
 
+import { Fragment } from 'react';
 import type { Route } from './+types/root';
 import './app.css';
+import { localeFromPathname, pathForLocale, t } from './i18n';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -18,17 +21,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname,
     'https://ikenox.info'
   ).toString();
-  const isTopPage = location.pathname === '/';
+  const uiLocale = localeFromPathname(location.pathname);
+  const homePath = uiLocale === 'ja' ? '/' : '/en';
+  const isTopPage = location.pathname === homePath;
+
+  // Hide the language switcher entirely on a blog post that has no English
+  // variant; elsewhere (home, etc.) both locales are always available.
+  const matches = useMatches();
+  const postMatch = matches.find(
+    (m) => (m.data as { post?: unknown } | undefined)?.post != null
+  );
+  const post = (postMatch?.data as { post?: { hasEn?: boolean } } | undefined)
+    ?.post;
+  const showSwitcher = post ? post.hasEn === true : true;
+
+  const localeLinks = [
+    { locale: 'ja' as const, label: 'JP' },
+    { locale: 'en' as const, label: 'EN' },
+  ];
 
   const headers = {
     siteName: 'ikenox.info',
-    description:
-      'A tech blog and portfolio site sharing software engineering insights, experiences, and thoughts.',
+    description: t(uiLocale).siteDescription,
     image: 'https://ikenox.info/icon.png',
   };
 
   return (
-    <html lang="en">
+    <html lang={uiLocale}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -56,7 +75,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <header>
           <span className="logo">
-            {isTopPage ? 'ikenox.info' : <Link to="/">ikenox.info</Link>}
+            {isTopPage ? 'ikenox.info' : <Link to={homePath}>ikenox.info</Link>}
           </span>
           {' | '}
           <span>
@@ -76,10 +95,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            <a href="/rss.xml" target="_blank" rel="noreferrer">
+            <a
+              href={uiLocale === 'ja' ? '/rss.xml' : '/en/rss.xml'}
+              target="_blank"
+              rel="noreferrer"
+            >
               RSS
             </a>
           </span>
+          {showSwitcher && (
+            <>
+              {' | '}
+              <span>
+                {localeLinks.map(({ locale, label }, i) => (
+                  <Fragment key={locale}>
+                    {i > 0 && '/'}
+                    {locale === uiLocale ? (
+                      label
+                    ) : (
+                      <Link to={pathForLocale(location.pathname, locale)}>
+                        {label}
+                      </Link>
+                    )}
+                  </Fragment>
+                ))}
+              </span>
+            </>
+          )}
         </header>
         {children}
         <ScrollRestoration />

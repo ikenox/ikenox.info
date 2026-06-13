@@ -86,3 +86,12 @@ blockquote {
   width: 100%;
   max-width: 720px;
 }
+
+.translation-notice {
+  background-color: var(--grey-light);
+  border-left: 4px solid var(--grey);
+  padding: 0.6em 1em;
+  margin: 1em 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
