@@ -22,7 +22,12 @@ export default function Home({
           <li key={post.slug}>
             <time dateTime={post.createdAt}>{post.createdAt}</time>{' '}
             <Link
-              to={pathForLocale(`/blog/${post.slug}`, uiLocale)}
+              // Posts without an English variant link straight to the Japanese URL.
+              to={
+                uiLocale === 'en' && !post.hasEn
+                  ? `/blog/${post.slug}`
+                  : pathForLocale(`/blog/${post.slug}`, uiLocale)
+              }
               lang={post.contentLocale}
             >
               {post.title}

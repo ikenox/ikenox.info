@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useMatches,
 } from 'react-router';
 
 import { Fragment } from 'react';
@@ -23,9 +24,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const uiLocale = localeFromPathname(location.pathname);
   const homePath = uiLocale === 'ja' ? '/' : '/en';
   const isTopPage = location.pathname === homePath;
+
+  // On a blog post page, English is only reachable when an English variant
+  // exists; elsewhere (home, etc.) both locales are always available.
+  const matches = useMatches();
+  const postMatch = matches.find(
+    (m) => (m.data as { post?: unknown } | undefined)?.post != null
+  );
+  const post = (postMatch?.data as { post?: { hasEn?: boolean } } | undefined)
+    ?.post;
+  const enAvailable = post ? post.hasEn === true : true;
+
   const localeLinks = [
-    { locale: 'ja' as const, label: '日本語' },
-    { locale: 'en' as const, label: 'EN' },
+    { locale: 'ja' as const, label: '日本語', available: true },
+    { locale: 'en' as const, label: 'EN', available: enAvailable },
   ];
 
   const headers = {
@@ -67,15 +79,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </span>
           {' | '}
           <span>
-            {localeLinks.map(({ locale, label }, i) => (
+            {localeLinks.map(({ locale, label, available }, i) => (
               <Fragment key={locale}>
                 {i > 0 && '/'}
                 {locale === uiLocale ? (
                   label
-                ) : (
+                ) : available ? (
                   <Link to={pathForLocale(location.pathname, locale)}>
                     {label}
                   </Link>
+                ) : (
+                  <span className="lang-unavailable">{label}</span>
                 )}
               </Fragment>
             ))}

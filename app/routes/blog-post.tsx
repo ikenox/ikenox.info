@@ -73,6 +73,11 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   if (!post) {
     throw data('Post not found', { status: 404 });
   }
+  // No English variant for this post: send /en requests to the Japanese URL
+  // instead of serving Japanese content under an /en URL.
+  if (uiLocale === 'en' && !post.hasEn) {
+    return redirect(`/blog/${params.slug}`);
+  }
   return { post };
 };
 

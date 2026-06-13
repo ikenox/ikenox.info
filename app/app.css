@@ -82,6 +82,10 @@ blockquote {
   font-weight: bold;
 }
 
+.lang-unavailable {
+  color: var(--grey);
+}
+
 .blog-post-content img {
   width: 100%;
   max-width: 720px;

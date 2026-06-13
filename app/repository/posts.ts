@@ -22,9 +22,17 @@ export interface Post {
 /** Logical slugs of all posts. Japanese (`<slug>.md`) is the base; `.en.md` are variants. */
 export const getAllPostsSlugs = async () => {
   const files = await fs.readdir(postsDirectory);
+  const enSlugs = new Set(
+    files
+      .filter((file) => file.endsWith('.en.md'))
+      .map((file) => file.replace(/\.en\.md$/, ''))
+  );
   return files
     .filter((file) => file.endsWith('.md') && !file.endsWith('.en.md'))
-    .map((file) => ({ file, slug: file.replace(/\.md$/, '') }));
+    .map((file) => {
+      const slug = file.replace(/\.md$/, '');
+      return { file, slug, hasEn: enSlugs.has(slug) };
+    });
 };
 
 export const getAllPosts = async (uiLocale: Locale): Promise<Post[]> => {
