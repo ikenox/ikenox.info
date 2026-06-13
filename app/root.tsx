@@ -62,10 +62,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <header>
+          <span className="logo">
+            {isTopPage ? 'ikenox.info' : <Link to={homePath}>ikenox.info</Link>}
+          </span>
+          {' | '}
           <span>
             {localeLinks.map(({ locale, label }, i) => (
               <Fragment key={locale}>
-                {i > 0 && ' / '}
+                {i > 0 && '/'}
                 {locale === uiLocale ? (
                   label
                 ) : (
@@ -75,10 +79,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 )}
               </Fragment>
             ))}
-          </span>
-          {' | '}
-          <span className="logo">
-            {isTopPage ? 'ikenox.info' : <Link to={homePath}>ikenox.info</Link>}
           </span>
           {' | '}
           <span>
