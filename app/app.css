@@ -6,7 +6,6 @@
 
   --white: #ffffff;
   --bg: #cceeff;
-  --surface-alt: #fff6cc;
   --border: #008b8b;
   --accent: #e6007e;
 
@@ -80,7 +79,7 @@ th {
 
 code {
   font-family: var(--code-font);
-  background-color: var(--surface-alt);
+  background-color: var(--white);
   font-size: 11pt;
   padding: 0.1em 0.25em;
 }
@@ -95,7 +94,7 @@ pre {
   font-size: 11pt;
   line-height: 1.6;
   overflow-x: auto;
-  background-color: var(--surface-alt);
+  background-color: var(--white);
   border: 1px outset var(--border);
 }
 
@@ -125,7 +124,7 @@ blockquote {
 }
 
 .translation-notice {
-  background-color: var(--surface-alt);
+  background-color: var(--white);
   border-left: 4px solid var(--accent);
   padding: 0.6em 1em;
   margin: 1em 0;
