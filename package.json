@@ -36,7 +36,7 @@
     "yaml": "^2.7.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241112.0",
+    "@cloudflare/workers-types": "^5.20260821.1",
     "@react-router/dev": "^7.1.5",
     "@shikijs/engine-oniguruma": "^2.3.2",
     "@shikijs/langs": "^2.3.2",
@@ -59,7 +59,7 @@
     "shiki": "^2.3.2",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
-    "wrangler": "^3.87.0"
+    "wrangler": "^4.125.0"
   },
   "packageManager": "pnpm@10.4.0"
 }
