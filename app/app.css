@@ -1,23 +1,45 @@
 :root {
   --code-font: ui-monospace, Menlo, Monaco, sans-serif;
+
+  /* Horizontal page padding, shared with the pre bleed-out amount */
+  --page-padding: 1rem;
+
   --white: #ffffff;
-  --grey: grey;
-  --grey-light: #f3f3f3;
-  --yellow-light: #ffffe0;
+  --bg: #cceeff;
+  --surface-alt: #fff6cc;
+  --border: #008b8b;
+  --accent: #e6007e;
+
+  --text: #000000;
+  --link: #cc0066;
+  --link-hover: #0000cc;
 }
 
 body {
   font-family: sans-serif;
-  padding: 1rem;
+  padding: var(--page-padding);
   margin: 0 0 env(safe-area-inset-bottom);
-  background-color: var(--yellow-light);
+  color: var(--text);
+  background-color: var(--bg);
 }
 
 @media (min-width: 720px) {
+  :root {
+    --page-padding: 2rem;
+  }
+
   body {
-    padding: 2rem;
     margin: auto;
   }
+}
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--link-hover);
 }
 
 p,
@@ -39,24 +61,28 @@ h1 {
   font-size: 2rem;
 }
 
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
 table {
   background-color: var(--white);
-  border: 1px outset var(--grey);
+  border: 1px outset var(--border);
   border-spacing: 2px;
 }
 
 td,
 th {
-  border: 1px inset var(--grey);
+  border: 1px inset var(--border);
   padding: 0.2em 0.4em;
 }
 
 code {
   font-family: var(--code-font);
-  background-color: var(--grey-light);
+  background-color: var(--surface-alt);
   font-size: 11pt;
   padding: 0.1em 0.25em;
-  border-radius: 2px;
 }
 
 pre > code {
@@ -69,11 +95,22 @@ pre {
   font-size: 11pt;
   line-height: 1.6;
   overflow-x: auto;
-  border: 1px outset var(--grey);
+  background-color: var(--surface-alt);
+  border: 1px outset var(--border);
+}
+
+/* On narrow screens let code blocks bleed out to the screen edges */
+@media (max-width: 719px) {
+  pre {
+    margin-left: calc(var(--page-padding) * -1);
+    margin-right: calc(var(--page-padding) * -1);
+    border-left: none;
+    border-right: none;
+  }
 }
 
 blockquote {
-  border-left: 4px solid var(--grey-light);
+  border-left: 4px solid var(--accent);
   padding: 0 0 0 20px;
   margin: 0;
 }
@@ -88,8 +125,8 @@ blockquote {
 }
 
 .translation-notice {
-  background-color: var(--grey-light);
-  border-left: 4px solid var(--grey);
+  background-color: var(--surface-alt);
+  border-left: 4px solid var(--accent);
   padding: 0.6em 1em;
   margin: 1em 0;
   font-size: 0.9rem;
