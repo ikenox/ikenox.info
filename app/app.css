@@ -5,14 +5,21 @@
   --page-padding: 1rem;
 
   --white: #ffffff;
-  --bg: #cceeff;
-  --surface-alt: #fff6cc;
-  --border: #008b8b;
-  --accent: #e6007e;
+  --bg: #fff8d0;
+
+  /*
+   * The two rules of the table and code block frames. The UA stylesheet leaves
+   * both at currentcolor, but those bevels wash out -- the outer one against
+   * the cream background, the inner one against the white panel -- so both are
+   * given explicit greys, the inner one a step lighter than the outer.
+   */
+  --frame-outer: #333333;
+  --frame-inner: #666666;
 
   --text: #000000;
-  --link: #cc0066;
-  --link-hover: #0000cc;
+  --link: #0000ee;
+  --link-visited: #551a8b;
+  --link-hover: #cc0066;
 }
 
 body {
@@ -38,6 +45,10 @@ a {
   text-decoration: underline;
 }
 
+a:visited {
+  color: var(--link-visited);
+}
+
 a:hover {
   color: var(--link-hover);
 }
@@ -61,42 +72,51 @@ h1 {
   font-size: 2rem;
 }
 
-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-}
-
+/*
+ * Reproduce how a browser renders a bare <table border="1">: an outset frame,
+ * a 2px gap showing the table background, and inset borders on the cells.
+ * Only the bevel colors depart from the UA stylesheet, see --frame-outer.
+ */
 table {
   background-color: var(--white);
-  border: 1px outset var(--border);
+  border: 1px outset var(--frame-outer);
+  border-collapse: separate;
   border-spacing: 2px;
 }
 
 td,
 th {
-  border: 1px inset var(--border);
+  border: 1px inset var(--frame-inner);
   padding: 0.2em 0.4em;
 }
 
 code {
   font-family: var(--code-font);
-  background-color: var(--surface-alt);
+  background-color: var(--white);
   font-size: 11pt;
   padding: 0.1em 0.25em;
 }
 
-pre > code {
-  all: unset;
-}
-
+/*
+ * Code blocks speak the same border language as the tables above: the pre is
+ * the outset frame with a 2px white gap (its padding), and the code inside it
+ * carries the inset border, like a single table cell.
+ */
 pre {
   font-family: var(--code-font);
-  padding: 1em;
   font-size: 11pt;
   line-height: 1.6;
+  background-color: var(--white);
+  border: 1px outset var(--frame-outer);
+  padding: 2px;
+}
+
+pre > code {
+  all: unset;
+  display: block;
+  border: 1px inset var(--frame-inner);
+  padding: 1em;
   overflow-x: auto;
-  background-color: var(--surface-alt);
-  border: 1px outset var(--border);
 }
 
 /* On narrow screens let code blocks bleed out to the screen edges */
@@ -104,13 +124,20 @@ pre {
   pre {
     margin-left: calc(var(--page-padding) * -1);
     margin-right: calc(var(--page-padding) * -1);
+    padding-left: 0;
+    padding-right: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  pre > code {
     border-left: none;
     border-right: none;
   }
 }
 
 blockquote {
-  border-left: 4px solid var(--accent);
+  border-left: 4px solid var(--frame-inner);
   padding: 0 0 0 20px;
   margin: 0;
 }
@@ -125,8 +152,8 @@ blockquote {
 }
 
 .translation-notice {
-  background-color: var(--surface-alt);
-  border-left: 4px solid var(--accent);
+  background-color: var(--white);
+  border-left: 4px solid var(--frame-inner);
   padding: 0.6em 1em;
   margin: 1em 0;
   font-size: 0.9rem;

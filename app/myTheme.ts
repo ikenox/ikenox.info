@@ -1,13 +1,13 @@
 import type { ThemeRegistration } from 'shiki';
 
 export const theme: ThemeRegistration = {
-  colors: { 'editor.background': '#fff6cc', 'editor.foreground': '#000000' },
+  colors: { 'editor.background': '#ffffff', 'editor.foreground': '#000000' },
   displayName: 'My Theme',
   name: 'my-theme',
   semanticHighlighting: true,
   semanticTokenColors: {},
   tokenColors: [
-    { settings: { foreground: '#000000', background: '#fff6cc' } },
+    { settings: { foreground: '#000000', background: '#ffffff' } },
     { scope: 'emphasis', settings: { fontStyle: 'italic' } },
     { scope: 'strong', settings: { fontStyle: 'bold' } },
     { scope: 'comment', settings: { foreground: '#4f6165' } },
